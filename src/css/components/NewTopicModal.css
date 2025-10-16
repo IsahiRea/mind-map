@@ -1,0 +1,195 @@
+/* NewTopicModal - Mobile First */
+.new-topic-modal {
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 1.5625rem;
+  position: relative;
+  width: 100%;
+}
+
+.new-topic-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  border-radius: 2px;
+}
+
+.new-topic-modal-close:hover {
+  opacity: 1;
+}
+
+.new-topic-modal-close img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.new-topic-modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.new-topic-modal-title {
+  font-family: 'Arimo', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.125rem;
+  color: #0a0a0a;
+  margin: 0;
+}
+
+.new-topic-modal-subtitle {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  color: #717182;
+  margin: 0;
+}
+
+.new-topic-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.new-topic-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.new-topic-form-label {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 0.875rem;
+  color: #0a0a0a;
+}
+
+.new-topic-form-input,
+.new-topic-form-textarea {
+  background-color: #f3f3f5;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.875rem;
+  color: #0a0a0a;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.new-topic-form-input {
+  height: 2.25rem;
+  padding: 0.25rem 0.75rem;
+}
+
+.new-topic-form-textarea {
+  height: 4rem;
+  padding: 0.5rem 0.75rem;
+  resize: vertical;
+  min-height: 4rem;
+}
+
+.new-topic-form-input::placeholder,
+.new-topic-form-textarea::placeholder {
+  color: #717182;
+}
+
+.new-topic-form-input:focus,
+.new-topic-form-textarea:focus {
+  border-color: #3b82f6;
+}
+
+.new-topic-color-grid {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.new-topic-color-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.new-topic-color-button:hover {
+  transform: scale(1.05);
+}
+
+.new-topic-color-button.selected {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #90a1b9;
+  transform: scale(1.1);
+}
+
+.new-topic-modal-footer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.new-topic-cancel-btn,
+.new-topic-submit-btn {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  padding: 0.5625rem 1.0625rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  border: none;
+}
+
+.new-topic-cancel-btn {
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #0a0a0a;
+}
+
+.new-topic-cancel-btn:hover {
+  background-color: #f3f3f5;
+}
+
+.new-topic-submit-btn {
+  background-color: #030213;
+  color: white;
+  border: none;
+}
+
+.new-topic-submit-btn:hover:not(:disabled) {
+  background-color: #1a1a2e;
+}
+
+.new-topic-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive Design - Tablet and Desktop */
+@media (min-width: 768px) {
+  .new-topic-modal {
+    padding: 1.5625rem;
+  }
+
+  .new-topic-color-grid {
+    gap: 0.5rem;
+  }
+}

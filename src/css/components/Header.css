@@ -1,0 +1,96 @@
+/* Header - Mobile First */
+.header {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  max-width: 1536px;
+  margin: 0 auto;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-logo {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.header-title {
+  font-family: 'Arimo', sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5rem;
+  color: #0a0a0a;
+  margin: 0;
+}
+
+.header-subtitle {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  color: #45556c;
+  margin: 0;
+}
+
+.header-mode-btn {
+  background-color: #030213;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  transition: background-color 0.2s;
+}
+
+.header-mode-btn:hover {
+  background-color: #1a1a2e;
+}
+
+.header-mode-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Responsive Design - Tablet and Desktop */
+@media (min-width: 768px) {
+  .header-container {
+    padding: 1.5rem 2rem;
+  }
+
+  .header-brand {
+    gap: 1rem;
+  }
+
+  .header-logo {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
