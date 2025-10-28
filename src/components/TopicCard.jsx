@@ -1,6 +1,7 @@
+import { Link } from 'react-router-dom';
 import '../css/components/TopicCard.css';
 
-export default function TopicCard({ title, description, nodeCount, iconBgColor, iconColor }) {
+export default function TopicCard({ id, title, description, nodeCount, iconBgColor, iconColor, isVisitorMode = false, onDelete }) {
   return (
     <div className="topic-card">
       <div className="topic-card-header">
@@ -21,12 +22,14 @@ export default function TopicCard({ title, description, nodeCount, iconBgColor, 
       <p className="topic-description">{description}</p>
 
       <div className="topic-card-footer">
-        <a href="#" className="topic-explore-link">
+        <Link to={`/topic/${id}`} className="topic-explore-link">
           Explore map →
-        </a>
-        <button className="topic-delete-btn">
-          Delete
-        </button>
+        </Link>
+        {!isVisitorMode && onDelete && (
+          <button className="topic-delete-btn" onClick={() => onDelete(id)}>
+            Delete
+          </button>
+        )}
       </div>
     </div>
   );
