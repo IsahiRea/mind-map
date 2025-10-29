@@ -77,6 +77,7 @@
 .header-mode-icon {
   width: 1rem;
   height: 1rem;
+  filter: brightness(0) invert(1);
 }
 
 /* Responsive Design - Tablet and Desktop */

@@ -30,6 +30,7 @@ export default function TopicMapPage() {
     loading: nodesLoading,
     error: nodesError,
     createNode,
+    updateNodePositionLocal,
     updateNodePosition,
     deleteNode,
     getConnectedNodes,
@@ -70,13 +71,13 @@ export default function TopicMapPage() {
     setZoom(prev => Math.max(prev - 10, 50));
   };
 
-  const handleNodeDrag = () => {
-    // Position updates handled by MapNode component's local state
-    // Database update happens on drag end
+  const handleNodeDrag = (nodeId, newPosition) => {
+    // Update local state only during drag for smooth visual feedback
+    updateNodePositionLocal(nodeId, newPosition);
   };
 
   const handleNodeDragEnd = (nodeId) => {
-    // Save to database when drag ends
+    // Save final position to database when drag ends
     const node = getNodeById(nodeId);
     if (node) {
       updateNodePosition(nodeId, node.position);

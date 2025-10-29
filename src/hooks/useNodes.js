@@ -126,7 +126,21 @@ export function useNodes(topicId) {
   }
 
   /**
-   * Update node position (debounced in component)
+   * Update node position locally (for dragging)
+   * @param {string} id - Node ID
+   * @param {Object} position - New position {x, y}
+   */
+  function updateNodePositionLocal(id, position) {
+    // Update local state immediately for smooth UX during dragging
+    setNodes(prev =>
+      prev.map(n =>
+        n.id === id ? { ...n, position } : n
+      )
+    )
+  }
+
+  /**
+   * Update node position and save to database
    * @param {string} id - Node ID
    * @param {Object} position - New position {x, y}
    */
@@ -196,6 +210,7 @@ export function useNodes(topicId) {
     error,
     createNode,
     updateNode,
+    updateNodePositionLocal,
     updateNodePosition,
     deleteNode,
     getConnectedNodes,
