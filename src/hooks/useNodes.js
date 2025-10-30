@@ -203,6 +203,79 @@ export function useNodes(topicId) {
     return nodes.find(node => node.id === id)
   }
 
+  /**
+   * Add a connection between two nodes
+   * @param {string} fromNodeId - Source node ID
+   * @param {string} toNodeId - Target node ID
+   */
+  async function addConnection(fromNodeId, toNodeId) {
+    try {
+      await connectionsService.create(fromNodeId, toNodeId)
+      await loadNodesAndConnections()
+    } catch (err) {
+      console.error('Error adding connection:', err)
+      setError(err.message)
+      throw err
+    }
+  }
+
+  /**
+   * Remove a connection between two nodes
+   * @param {string} fromNodeId - Source node ID
+   * @param {string} toNodeId - Target node ID
+   */
+  async function removeConnection(fromNodeId, toNodeId) {
+    try {
+      await connectionsService.delete(fromNodeId, toNodeId)
+      await loadNodesAndConnections()
+    } catch (err) {
+      console.error('Error removing connection:', err)
+      setError(err.message)
+      throw err
+    }
+  }
+
+  /**
+   * Update connections for a node
+   * @param {string} nodeId - Node ID
+   * @param {Array} newConnectionIds - Array of node IDs that should be connected
+   */
+  async function updateConnections(nodeId, newConnectionIds) {
+    try {
+      // Get current connections
+      const currentConnections = connections.filter(
+        conn => conn.from === nodeId || conn.to === nodeId
+      )
+
+      const currentConnectionIds = currentConnections.map(conn =>
+        conn.from === nodeId ? conn.to : conn.from
+      )
+
+      // Find connections to add and remove
+      const toAdd = newConnectionIds.filter(id => !currentConnectionIds.includes(id))
+      const toRemove = currentConnectionIds.filter(id => !newConnectionIds.includes(id))
+
+      // Execute additions and removals
+      const addPromises = toAdd.map(id => connectionsService.create(nodeId, id))
+      const removePromises = toRemove.map(id => {
+        // Need to handle both directions
+        const conn = currentConnections.find(c =>
+          (c.from === nodeId && c.to === id) || (c.from === id && c.to === nodeId)
+        )
+        if (conn) {
+          return connectionsService.delete(conn.from, conn.to)
+        }
+      }).filter(Boolean)
+
+      await Promise.all([...addPromises, ...removePromises])
+      await loadNodesAndConnections()
+    } catch (err) {
+      console.error('Error updating connections:', err)
+      setError(err.message)
+      throw err
+    }
+  }
+
   return {
     nodes,
     connections,
@@ -215,6 +288,9 @@ export function useNodes(topicId) {
     deleteNode,
     getConnectedNodes,
     getNodeById,
+    addConnection,
+    removeConnection,
+    updateConnections,
     refresh: loadNodesAndConnections
   }
 }

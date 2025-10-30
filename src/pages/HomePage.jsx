@@ -4,12 +4,15 @@ import { useTopics } from '../hooks/useTopics';
 import Header from '../components/Header';
 import TopicCard from '../components/TopicCard';
 import NewTopicModal from '../components/NewTopicModal';
+import DeleteTopicModal from '../components/DeleteTopicModal';
 import plusIcon from '../assets/icons/plus.svg';
 import '../css/pages/HomePage.css';
 
 export default function HomePage() {
   const { isVisitorMode } = useVisitorMode();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [topicToDelete, setTopicToDelete] = useState(null);
   const { topics, loading, error, createTopic, deleteTopic } = useTopics();
 
   const handleCreateTopic = async (newTopic) => {
@@ -22,17 +25,27 @@ export default function HomePage() {
     }
   };
 
-  const handleDeleteTopic = async (topicId) => {
-    if (!window.confirm('Are you sure you want to delete this topic? All nodes and connections will be permanently deleted.')) {
-      return;
-    }
+  const handleDeleteClick = (topicId) => {
+    const topic = topics.find(t => t.id === topicId);
+    setTopicToDelete(topic);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!topicToDelete) return;
 
     try {
-      await deleteTopic(topicId);
+      await deleteTopic(topicToDelete.id);
+      setTopicToDelete(null);
     } catch (err) {
       console.error('Failed to delete topic:', err);
       alert('Failed to delete topic. Please try again.');
     }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setTopicToDelete(null);
   };
 
   if (loading) {
@@ -98,7 +111,7 @@ export default function HomePage() {
               description={topic.description}
               nodeCount={topic.nodeCount}
               isVisitorMode={isVisitorMode}
-              onDelete={handleDeleteTopic}
+              onDelete={handleDeleteClick}
             />
           ))}
         </div>
@@ -108,6 +121,13 @@ export default function HomePage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreateTopic}
+      />
+
+      <DeleteTopicModal
+        isOpen={deleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        topicTitle={topicToDelete?.title || ''}
       />
     </div>
   );

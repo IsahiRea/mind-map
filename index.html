@@ -5,6 +5,30 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>mind-map</title>
+    <script>
+      // Make touch event listeners passive by default to improve scrolling performance
+      // This prevents the warning: "Added non-passive event listener to a scroll-blocking 'touchmove' event"
+      (function() {
+        if (typeof EventTarget !== 'undefined') {
+          const originalAddEventListener = EventTarget.prototype.addEventListener;
+          EventTarget.prototype.addEventListener = function(type, listener, options) {
+            const usesListenerOptions = typeof options === 'object' && options !== null;
+            const useCapture = usesListenerOptions ? options.capture : options;
+
+            // For touchstart, touchmove, and wheel events, default to passive: true
+            // unless explicitly set to passive: false
+            if (type === 'touchstart' || type === 'touchmove' || type === 'wheel') {
+              const shouldBePassive = usesListenerOptions && options.passive === false ? false : true;
+              options = usesListenerOptions ?
+                { ...options, passive: shouldBePassive } :
+                { passive: shouldBePassive, capture: useCapture };
+            }
+
+            originalAddEventListener.call(this, type, listener, options);
+          };
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

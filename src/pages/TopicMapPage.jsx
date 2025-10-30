@@ -30,11 +30,13 @@ export default function TopicMapPage() {
     loading: nodesLoading,
     error: nodesError,
     createNode,
+    updateNode,
     updateNodePositionLocal,
     updateNodePosition,
     deleteNode,
     getConnectedNodes,
-    getNodeById
+    getNodeById,
+    updateConnections
   } = useNodes(topicId);
 
   // Load topic data
@@ -102,6 +104,30 @@ export default function TopicMapPage() {
     }
   };
 
+  const handleSaveNode = async (updates) => {
+    if (!selectedNode) return;
+
+    try {
+      // Update node title and description
+      const { connections: newConnections, ...nodeUpdates } = updates;
+
+      if (nodeUpdates.title || nodeUpdates.description) {
+        await updateNode(selectedNode.id, nodeUpdates);
+      }
+
+      // Update connections if they changed
+      if (newConnections !== undefined) {
+        await updateConnections(selectedNode.id, newConnections);
+      }
+
+      // Update the selected node with new data
+      setSelectedNode(prev => ({ ...prev, ...nodeUpdates }));
+    } catch (err) {
+      console.error('Failed to update node:', err);
+      throw err; // Re-throw to let modal handle the error
+    }
+  };
+
   const handleDeleteNode = async () => {
     if (!selectedNode) return;
 
@@ -113,14 +139,6 @@ export default function TopicMapPage() {
       console.error('Failed to delete node:', err);
       alert('Failed to delete node. Please try again.');
     }
-  };
-
-  const handleEditNode = () => {
-    // Close details modal and open edit modal
-    // For now, just close the details modal
-    // TODO: Implement edit functionality
-    setIsNodeDetailsModalOpen(false);
-    alert('Edit functionality coming soon!');
   };
 
   if (loadingTopic || nodesLoading) {
@@ -272,7 +290,8 @@ export default function TopicMapPage() {
         node={selectedNode}
         topicTitle={topic.title}
         connectedNodes={selectedNode ? getConnectedNodes(selectedNode.id) : []}
-        onEdit={handleEditNode}
+        availableNodes={nodes}
+        onSave={handleSaveNode}
         onDelete={handleDeleteNode}
         isVisitorMode={isVisitorMode}
       />

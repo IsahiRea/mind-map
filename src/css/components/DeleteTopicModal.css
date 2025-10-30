@@ -1,0 +1,145 @@
+/* Delete Topic Modal - Mobile First */
+.delete-topic-modal {
+  background-color: #18181b;
+  border-radius: 12px;
+  border: 1px solid #27272a;
+  padding: 1.5rem;
+}
+
+.delete-topic-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.delete-topic-modal-close:hover {
+  background-color: #27272a;
+}
+
+.delete-topic-modal-close img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+
+.delete-topic-modal-header {
+  margin-bottom: 1.5rem;
+  padding-right: 2rem;
+}
+
+.delete-topic-modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fafafa;
+  margin: 0 0 0.5rem 0;
+}
+
+.delete-topic-modal-subtitle {
+  font-size: 0.875rem;
+  color: #a1a1aa;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.delete-topic-modal-subtitle strong {
+  color: #fafafa;
+  font-weight: 500;
+}
+
+.delete-topic-modal-content {
+  margin-bottom: 1.5rem;
+}
+
+.delete-topic-warning {
+  font-size: 0.875rem;
+  color: #fca5a5;
+  background-color: rgba(239, 68, 68, 0.1);
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.delete-topic-modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  flex-direction: column;
+}
+
+.delete-topic-cancel-btn,
+.delete-topic-confirm-btn {
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  width: 100%;
+}
+
+.delete-topic-cancel-btn {
+  background-color: #27272a;
+  color: #fafafa;
+  border-color: #3f3f46;
+}
+
+.delete-topic-cancel-btn:hover {
+  background-color: #3f3f46;
+}
+
+.delete-topic-confirm-btn {
+  background-color: #dc2626;
+  color: #fafafa;
+  border-color: #dc2626;
+}
+
+.delete-topic-confirm-btn:hover {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.delete-topic-confirm-btn:active {
+  transform: scale(0.98);
+}
+
+.delete-topic-cancel-btn:active {
+  transform: scale(0.98);
+}
+
+/* Responsive Design - Tablet and Desktop */
+@media (min-width: 768px) {
+  .delete-topic-modal {
+    padding: 2rem;
+  }
+
+  .delete-topic-modal-close {
+    top: 1.5rem;
+    right: 1.5rem;
+  }
+
+  .delete-topic-modal-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .delete-topic-cancel-btn,
+  .delete-topic-confirm-btn {
+    width: auto;
+    min-width: 120px;
+  }
+
+  .delete-topic-modal-title {
+    font-size: 1.75rem;
+  }
+}

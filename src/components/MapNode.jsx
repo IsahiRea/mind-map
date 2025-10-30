@@ -6,14 +6,16 @@ export default function MapNode({ id, title, description, connectionCount, posit
   const [isDragging, setIsDragging] = useState(false);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
 
-  const handleMouseDown = (e) => {
+  const handlePointerDown = (e) => {
     if (isDraggingDisabled) return;
 
     if (e.target.closest('.map-node-drag-handle')) {
       setIsDragging(true);
+      const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+      const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
       dragOffsetRef.current = {
-        x: e.clientX - position.x,
-        y: e.clientY - position.y
+        x: clientX - position.x,
+        y: clientY - position.y
       };
       e.preventDefault();
     }
@@ -29,23 +31,30 @@ export default function MapNode({ id, title, description, connectionCount, posit
   useEffect(() => {
     if (!isDragging) return;
 
-    const handleMouseMove = (e) => {
-      const newX = e.clientX - dragOffsetRef.current.x;
-      const newY = e.clientY - dragOffsetRef.current.y;
+    const handlePointerMove = (e) => {
+      const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+      const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+      const newX = clientX - dragOffsetRef.current.x;
+      const newY = clientY - dragOffsetRef.current.y;
       onDrag(id, { x: newX, y: newY });
     };
 
-    const handleMouseUp = () => {
+    const handlePointerUp = () => {
       setIsDragging(false);
       onDragEnd(id);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    // Add both mouse and touch events with passive option for touch
+    document.addEventListener('mousemove', handlePointerMove);
+    document.addEventListener('mouseup', handlePointerUp);
+    document.addEventListener('touchmove', handlePointerMove, { passive: false });
+    document.addEventListener('touchend', handlePointerUp);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousemove', handlePointerMove);
+      document.removeEventListener('mouseup', handlePointerUp);
+      document.removeEventListener('touchmove', handlePointerMove);
+      document.removeEventListener('touchend', handlePointerUp);
     };
   }, [isDragging, id, onDrag, onDragEnd]);
 
@@ -54,7 +63,8 @@ export default function MapNode({ id, title, description, connectionCount, posit
       ref={nodeRef}
       className={`map-node ${isDragging ? 'dragging' : ''}`}
       style={{ left: `${position.x}px`, top: `${position.y}px` }}
-      onMouseDown={handleMouseDown}
+      onMouseDown={handlePointerDown}
+      onTouchStart={handlePointerDown}
       onClick={handleClick}
     >
       {!isDraggingDisabled && (
