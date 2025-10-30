@@ -1,10 +1,25 @@
+import React from 'react'
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useTopics } from '../useTopics'
 import { topicsService } from '../../services/topicsService'
 
 // Mock the topics service
 vi.mock('../../services/topicsService')
+
+// Create a wrapper with QueryClientProvider
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  })
+  return ({ children }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children)
+}
 
 describe('useTopics', () => {
   beforeEach(() => {
@@ -14,7 +29,7 @@ describe('useTopics', () => {
   it('should initialize with empty topics and loading state', () => {
     topicsService.getAll.mockResolvedValue([])
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     expect(result.current.topics).toEqual([])
     expect(result.current.loading).toBe(true)
@@ -43,7 +58,7 @@ describe('useTopics', () => {
 
     topicsService.getAll.mockResolvedValue(mockTopics)
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -64,7 +79,7 @@ describe('useTopics', () => {
     const mockError = new Error('Failed to load topics')
     topicsService.getAll.mockRejectedValue(mockError)
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -94,7 +109,7 @@ describe('useTopics', () => {
 
     topicsService.create.mockResolvedValue(createdTopic)
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -131,7 +146,7 @@ describe('useTopics', () => {
     const mockError = new Error('Failed to create topic')
     topicsService.create.mockRejectedValue(mockError)
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -169,7 +184,7 @@ describe('useTopics', () => {
     topicsService.getAll.mockResolvedValue(mockTopics)
     topicsService.delete.mockResolvedValue()
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -192,7 +207,7 @@ describe('useTopics', () => {
     const mockError = new Error('Failed to delete topic')
     topicsService.delete.mockRejectedValue(mockError)
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -229,7 +244,7 @@ describe('useTopics', () => {
 
     topicsService.update.mockResolvedValue(updatedTopic)
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -256,7 +271,7 @@ describe('useTopics', () => {
     const mockError = new Error('Failed to update topic')
     topicsService.update.mockRejectedValue(mockError)
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -274,7 +289,7 @@ describe('useTopics', () => {
   it('should refresh topics', async () => {
     topicsService.getAll.mockResolvedValue([])
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -318,7 +333,7 @@ describe('useTopics', () => {
 
     topicsService.getAll.mockResolvedValue(mockTopics)
 
-    const { result } = renderHook(() => useTopics())
+    const { result } = renderHook(() => useTopics(), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
