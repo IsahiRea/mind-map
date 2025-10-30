@@ -1,128 +1,92 @@
-import { useState, useEffect } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { topicsService } from '../services/topicsService'
 
 /**
- * Custom hook for managing topics
+ * Transform database format to component format
+ */
+function transformTopic(topic) {
+  return {
+    id: topic.id,
+    title: topic.title,
+    description: topic.description,
+    iconBgColor: topic.icon_bg_color,
+    iconColor: topic.icon_color,
+    nodeCount: topic.node_count || 0,
+  }
+}
+
+/**
+ * Custom hook for managing topics with React Query
  * @returns {Object} Topics state and operations
  */
 export function useTopics() {
-  const [topics, setTopics] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const queryClient = useQueryClient()
 
-  // Load topics on mount
-  useEffect(() => {
-    loadTopics()
-  }, [])
-
-  /**
-   * Load all topics from database
-   */
-  async function loadTopics() {
-    try {
-      setLoading(true)
-      setError(null)
+  // Fetch topics with React Query
+  const {
+    data: topics = [],
+    isLoading: loading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['topics'],
+    queryFn: async () => {
       const data = await topicsService.getAll()
+      return data.map(transformTopic)
+    },
+  })
 
-      // Transform database format to component format
-      const transformedTopics = data.map(topic => ({
-        id: topic.id,
-        title: topic.title,
-        description: topic.description,
-        iconBgColor: topic.icon_bg_color,
-        iconColor: topic.icon_color,
-        nodeCount: topic.node_count || 0
-      }))
+  // Create topic mutation
+  const createMutation = useMutation({
+    mutationFn: topicsService.create,
+    onSuccess: newTopic => {
+      // Optimistically update cache
+      queryClient.setQueryData(['topics'], old => {
+        const transformedTopic = transformTopic({ ...newTopic, node_count: 0 })
+        return [transformedTopic, ...(old || [])]
+      })
+    },
+  })
 
-      setTopics(transformedTopics)
-    } catch (err) {
-      console.error('Error loading topics:', err)
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+  // Delete topic mutation
+  const deleteMutation = useMutation({
+    mutationFn: topicsService.delete,
+    onSuccess: (_, deletedId) => {
+      // Optimistically update cache
+      queryClient.setQueryData(['topics'], old => old?.filter(t => t.id !== deletedId) || [])
+    },
+  })
 
-  /**
-   * Create a new topic
-   * @param {Object} topicData - Topic data
-   * @returns {Promise<Object>} Created topic
-   */
-  async function createTopic(topicData) {
-    try {
-      const newTopic = await topicsService.create(topicData)
-
-      // Transform and add to local state
-      const transformedTopic = {
-        id: newTopic.id,
-        title: newTopic.title,
-        description: newTopic.description,
-        iconBgColor: newTopic.icon_bg_color,
-        iconColor: newTopic.icon_color,
-        nodeCount: 0
-      }
-
-      setTopics(prev => [transformedTopic, ...prev])
-      return transformedTopic
-    } catch (err) {
-      console.error('Error creating topic:', err)
-      setError(err.message)
-      throw err
-    }
-  }
-
-  /**
-   * Delete a topic
-   * @param {string} id - Topic ID
-   */
-  async function deleteTopic(id) {
-    try {
-      await topicsService.delete(id)
-      setTopics(prev => prev.filter(t => t.id !== id))
-    } catch (err) {
-      console.error('Error deleting topic:', err)
-      setError(err.message)
-      throw err
-    }
-  }
-
-  /**
-   * Update a topic
-   * @param {string} id - Topic ID
-   * @param {Object} updates - Fields to update
-   */
-  async function updateTopic(id, updates) {
-    try {
-      const updated = await topicsService.update(id, updates)
-
-      setTopics(prev =>
-        prev.map(t =>
-          t.id === id
-            ? {
-                ...t,
-                title: updated.title,
-                description: updated.description,
-                iconBgColor: updated.icon_bg_color,
-                iconColor: updated.icon_color
-              }
-            : t
-        )
+  // Update topic mutation
+  const updateMutation = useMutation({
+    mutationFn: ({ id, updates }) => topicsService.update(id, updates),
+    onSuccess: (updated, { id }) => {
+      // Optimistically update cache
+      queryClient.setQueryData(
+        ['topics'],
+        old =>
+          old?.map(t =>
+            t.id === id
+              ? {
+                  ...t,
+                  title: updated.title,
+                  description: updated.description,
+                  iconBgColor: updated.icon_bg_color,
+                  iconColor: updated.icon_color,
+                }
+              : t
+          ) || []
       )
-      return updated
-    } catch (err) {
-      console.error('Error updating topic:', err)
-      setError(err.message)
-      throw err
-    }
-  }
+    },
+  })
 
   return {
     topics,
     loading,
-    error,
-    createTopic,
-    deleteTopic,
-    updateTopic,
-    refresh: loadTopics
+    error: error?.message || null,
+    createTopic: createMutation.mutateAsync,
+    deleteTopic: deleteMutation.mutateAsync,
+    updateTopic: (id, updates) => updateMutation.mutateAsync({ id, updates }),
+    refresh: refetch,
   }
 }

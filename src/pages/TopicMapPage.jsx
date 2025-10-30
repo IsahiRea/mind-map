@@ -1,28 +1,28 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useVisitorMode } from '../context/VisitorModeContext';
-import { useNodes } from '../hooks/useNodes';
-import { topicsService } from '../services/topicsService';
-import MapNode from '../components/MapNode';
-import ConnectionLine from '../components/ConnectionLine';
-import AddNodeModal from '../components/AddNodeModal';
-import NodeDetailsModal from '../components/NodeDetailsModal';
-import LoadingSpinner from '../components/LoadingSpinner';
-import backIcon from '../assets/icons/back.svg';
-import zoomInIcon from '../assets/icons/zoom-in.svg';
-import zoomOutIcon from '../assets/icons/zoom-out.svg';
-import '../css/pages/TopicMapPage.css';
+import { useState, useEffect, useMemo } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useVisitorMode } from '../context/VisitorModeContext'
+import { useNodes } from '../hooks/useNodes'
+import { topicsService } from '../services/topicsService'
+import MapNode from '../components/MapNode'
+import ConnectionLine from '../components/ConnectionLine'
+import AddNodeModal from '../components/AddNodeModal'
+import NodeDetailsModal from '../components/NodeDetailsModal'
+import LoadingSpinner from '../components/LoadingSpinner'
+import backIcon from '../assets/icons/back.svg'
+import zoomInIcon from '../assets/icons/zoom-in.svg'
+import zoomOutIcon from '../assets/icons/zoom-out.svg'
+import '../css/pages/TopicMapPage.css'
 
 export default function TopicMapPage() {
-  const navigate = useNavigate();
-  const { topicId } = useParams();
-  const { isVisitorMode } = useVisitorMode();
-  const [zoom, setZoom] = useState(100);
-  const [isAddNodeModalOpen, setIsAddNodeModalOpen] = useState(false);
-  const [selectedNode, setSelectedNode] = useState(null);
-  const [isNodeDetailsModalOpen, setIsNodeDetailsModalOpen] = useState(false);
-  const [topic, setTopic] = useState(null);
-  const [loadingTopic, setLoadingTopic] = useState(true);
+  const navigate = useNavigate()
+  const { topicId } = useParams()
+  const { isVisitorMode } = useVisitorMode()
+  const [zoom, setZoom] = useState(100)
+  const [isAddNodeModalOpen, setIsAddNodeModalOpen] = useState(false)
+  const [selectedNode, setSelectedNode] = useState(null)
+  const [isNodeDetailsModalOpen, setIsNodeDetailsModalOpen] = useState(false)
+  const [topic, setTopic] = useState(null)
+  const [loadingTopic, setLoadingTopic] = useState(true)
 
   const {
     nodes,
@@ -36,110 +36,128 @@ export default function TopicMapPage() {
     deleteNode,
     getConnectedNodes,
     getNodeById,
-    updateConnections
-  } = useNodes(topicId);
+    updateConnections,
+  } = useNodes(topicId)
 
   // Load topic data
   useEffect(() => {
     async function loadTopic() {
       try {
-        setLoadingTopic(true);
-        const topicData = await topicsService.getById(topicId);
+        setLoadingTopic(true)
+        const topicData = await topicsService.getById(topicId)
         setTopic({
           id: topicData.id,
           title: topicData.title,
           description: topicData.description,
           iconBgColor: topicData.icon_bg_color,
-          iconColor: topicData.icon_color
-        });
+          iconColor: topicData.icon_color,
+        })
       } catch (err) {
-        console.error('Error loading topic:', err);
-        navigate('/');
+        console.error('Error loading topic:', err)
+        navigate('/')
       } finally {
-        setLoadingTopic(false);
+        setLoadingTopic(false)
       }
     }
 
     if (topicId) {
-      loadTopic();
+      loadTopic()
     }
-  }, [topicId, navigate]);
+  }, [topicId, navigate])
 
   const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 10, 200));
-  };
+    setZoom(prev => Math.min(prev + 10, 200))
+  }
 
   const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev - 10, 50));
-  };
+    setZoom(prev => Math.max(prev - 10, 50))
+  }
 
   const handleNodeDrag = (nodeId, newPosition) => {
     // Update local state only during drag for smooth visual feedback
-    updateNodePositionLocal(nodeId, newPosition);
-  };
+    updateNodePositionLocal(nodeId, newPosition)
+  }
 
-  const handleNodeDragEnd = (nodeId) => {
+  const handleNodeDragEnd = nodeId => {
     // Save final position to database when drag ends
-    const node = getNodeById(nodeId);
+    const node = getNodeById(nodeId)
     if (node) {
-      updateNodePosition(nodeId, node.position);
+      updateNodePosition(nodeId, node.position)
     }
-  };
+  }
 
-  const handleAddNode = async (nodeData) => {
+  const handleAddNode = async nodeData => {
     try {
-      await createNode(nodeData, nodeData.connections || []);
-      setIsAddNodeModalOpen(false);
+      await createNode(nodeData, nodeData.connections || [])
+      setIsAddNodeModalOpen(false)
     } catch (err) {
-      console.error('Failed to create node:', err);
-      alert('Failed to create node. Please try again.');
+      console.error('Failed to create node:', err)
+      alert('Failed to create node. Please try again.')
     }
-  };
+  }
 
-  const handleNodeClick = (nodeId) => {
-    const node = getNodeById(nodeId);
+  const handleNodeClick = nodeId => {
+    const node = getNodeById(nodeId)
     if (node) {
-      setSelectedNode(node);
-      setIsNodeDetailsModalOpen(true);
+      setSelectedNode(node)
+      setIsNodeDetailsModalOpen(true)
     }
-  };
+  }
 
-  const handleSaveNode = async (updates) => {
-    if (!selectedNode) return;
+  const handleSaveNode = async updates => {
+    if (!selectedNode) return
 
     try {
       // Update node title and description
-      const { connections: newConnections, ...nodeUpdates } = updates;
+      const { connections: newConnections, ...nodeUpdates } = updates
 
       if (nodeUpdates.title || nodeUpdates.description) {
-        await updateNode(selectedNode.id, nodeUpdates);
+        await updateNode(selectedNode.id, nodeUpdates)
       }
 
       // Update connections if they changed
       if (newConnections !== undefined) {
-        await updateConnections(selectedNode.id, newConnections);
+        await updateConnections(selectedNode.id, newConnections)
       }
 
       // Update the selected node with new data
-      setSelectedNode(prev => ({ ...prev, ...nodeUpdates }));
+      setSelectedNode(prev => ({ ...prev, ...nodeUpdates }))
     } catch (err) {
-      console.error('Failed to update node:', err);
-      throw err; // Re-throw to let modal handle the error
+      console.error('Failed to update node:', err)
+      throw err // Re-throw to let modal handle the error
     }
-  };
+  }
 
   const handleDeleteNode = async () => {
-    if (!selectedNode) return;
+    if (!selectedNode) return
 
     try {
-      await deleteNode(selectedNode.id);
-      setIsNodeDetailsModalOpen(false);
-      setSelectedNode(null);
+      await deleteNode(selectedNode.id)
+      setIsNodeDetailsModalOpen(false)
+      setSelectedNode(null)
     } catch (err) {
-      console.error('Failed to delete node:', err);
-      alert('Failed to delete node. Please try again.');
+      console.error('Failed to delete node:', err)
+      alert('Failed to delete node. Please try again.')
     }
-  };
+  }
+
+  // Memoize connection lines to avoid recalculating on every render
+  const connectionLines = useMemo(() => {
+    return connections
+      .map((connection, index) => {
+        const fromNode = getNodeById(connection.from)
+        const toNode = getNodeById(connection.to)
+
+        if (!fromNode || !toNode) return null
+
+        return {
+          key: `connection-${index}`,
+          fromNode,
+          toNode,
+        }
+      })
+      .filter(Boolean)
+  }, [connections, getNodeById])
 
   if (loadingTopic || nodesLoading) {
     return (
@@ -158,7 +176,7 @@ export default function TopicMapPage() {
           </div>
         </main>
       </div>
-    );
+    )
   }
 
   if (nodesError || !topic) {
@@ -180,7 +198,7 @@ export default function TopicMapPage() {
           </div>
         </main>
       </div>
-    );
+    )
   }
 
   return (
@@ -197,7 +215,10 @@ export default function TopicMapPage() {
 
           <div className="topic-info">
             <div className="topic-info-icon" style={{ backgroundColor: topic.iconBgColor }}>
-              <div className="topic-info-icon-inner" style={{ backgroundColor: topic.iconColor }}></div>
+              <div
+                className="topic-info-icon-inner"
+                style={{ backgroundColor: topic.iconColor }}
+              ></div>
             </div>
             <div className="topic-info-text">
               <h2 className="topic-info-title">{topic.title}</h2>
@@ -223,10 +244,34 @@ export default function TopicMapPage() {
 
           {!isVisitorMode && (
             <button className="add-node-btn" onClick={() => setIsAddNodeModalOpen(true)}>
-              <svg className="add-node-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="8" cy="8" r="7.5" fill="white" stroke={topic.iconColor} strokeWidth="1"/>
-                <path d="M3.33333 8H12.6667" stroke={topic.iconColor} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M8 3.33333V12.6667" stroke={topic.iconColor} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg
+                className="add-node-icon"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="8"
+                  cy="8"
+                  r="7.5"
+                  fill="white"
+                  stroke={topic.iconColor}
+                  strokeWidth="1"
+                />
+                <path
+                  d="M3.33333 8H12.6667"
+                  stroke={topic.iconColor}
+                  strokeWidth="1.33333"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M8 3.33333V12.6667"
+                  stroke={topic.iconColor}
+                  strokeWidth="1.33333"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
               <span>Add Node</span>
             </button>
@@ -240,20 +285,9 @@ export default function TopicMapPage() {
           <div className="canvas-background">
             <div className="nodes-container" style={{ transform: `scale(${zoom / 100})` }}>
               {/* Render connection lines first (so they appear behind nodes) */}
-              {connections.map((connection, index) => {
-                const fromNode = getNodeById(connection.from);
-                const toNode = getNodeById(connection.to);
-                if (fromNode && toNode) {
-                  return (
-                    <ConnectionLine
-                      key={`connection-${index}`}
-                      fromNode={fromNode}
-                      toNode={toNode}
-                    />
-                  );
-                }
-                return null;
-              })}
+              {connectionLines.map(({ key, fromNode, toNode }) => (
+                <ConnectionLine key={key} fromNode={fromNode} toNode={toNode} />
+              ))}
 
               {/* Render nodes */}
               {nodes.map(node => (
@@ -292,8 +326,8 @@ export default function TopicMapPage() {
       <NodeDetailsModal
         isOpen={isNodeDetailsModalOpen}
         onClose={() => {
-          setIsNodeDetailsModalOpen(false);
-          setSelectedNode(null);
+          setIsNodeDetailsModalOpen(false)
+          setSelectedNode(null)
         }}
         node={selectedNode}
         topicTitle={topic.title}
@@ -306,5 +340,5 @@ export default function TopicMapPage() {
         isVisitorMode={isVisitorMode}
       />
     </div>
-  );
+  )
 }

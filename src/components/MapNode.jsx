@@ -1,62 +1,74 @@
-import { useRef, useState, useEffect } from 'react';
-import '../css/components/MapNode.css';
+import { useRef, useState, useEffect, memo } from 'react'
+import '../css/components/MapNode.css'
 
-export default function MapNode({ id, title, description, connectionCount, position, onDrag, onDragEnd, onClick, isDraggingDisabled = false, iconBgColor, iconColor }) {
-  const nodeRef = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragOffsetRef = useRef({ x: 0, y: 0 });
+function MapNode({
+  id,
+  title,
+  description,
+  connectionCount,
+  position,
+  onDrag,
+  onDragEnd,
+  onClick,
+  isDraggingDisabled = false,
+  iconBgColor,
+  iconColor,
+}) {
+  const nodeRef = useRef(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragOffsetRef = useRef({ x: 0, y: 0 })
 
-  const handlePointerDown = (e) => {
-    if (isDraggingDisabled) return;
+  const handlePointerDown = e => {
+    if (isDraggingDisabled) return
 
     if (e.target.closest('.map-node-drag-handle')) {
-      setIsDragging(true);
-      const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
-      const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+      setIsDragging(true)
+      const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0
+      const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0
       dragOffsetRef.current = {
         x: clientX - position.x,
-        y: clientY - position.y
-      };
-      e.preventDefault();
+        y: clientY - position.y,
+      }
+      e.preventDefault()
     }
-  };
+  }
 
-  const handleClick = (e) => {
+  const handleClick = e => {
     // Only trigger onClick if not dragging and not clicking drag handle
     if (!isDragging && !e.target.closest('.map-node-drag-handle') && onClick) {
-      onClick();
+      onClick()
     }
-  };
+  }
 
   useEffect(() => {
-    if (!isDragging) return;
+    if (!isDragging) return
 
-    const handlePointerMove = (e) => {
-      const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
-      const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
-      const newX = clientX - dragOffsetRef.current.x;
-      const newY = clientY - dragOffsetRef.current.y;
-      onDrag(id, { x: newX, y: newY });
-    };
+    const handlePointerMove = e => {
+      const clientX = e.clientX ?? e.touches?.[0]?.clientX ?? 0
+      const clientY = e.clientY ?? e.touches?.[0]?.clientY ?? 0
+      const newX = clientX - dragOffsetRef.current.x
+      const newY = clientY - dragOffsetRef.current.y
+      onDrag(id, { x: newX, y: newY })
+    }
 
     const handlePointerUp = () => {
-      setIsDragging(false);
-      onDragEnd(id);
-    };
+      setIsDragging(false)
+      onDragEnd(id)
+    }
 
     // Add both mouse and touch events with passive option for touch
-    document.addEventListener('mousemove', handlePointerMove);
-    document.addEventListener('mouseup', handlePointerUp);
-    document.addEventListener('touchmove', handlePointerMove, { passive: false });
-    document.addEventListener('touchend', handlePointerUp);
+    document.addEventListener('mousemove', handlePointerMove)
+    document.addEventListener('mouseup', handlePointerUp)
+    document.addEventListener('touchmove', handlePointerMove, { passive: false })
+    document.addEventListener('touchend', handlePointerUp)
 
     return () => {
-      document.removeEventListener('mousemove', handlePointerMove);
-      document.removeEventListener('mouseup', handlePointerUp);
-      document.removeEventListener('touchmove', handlePointerMove);
-      document.removeEventListener('touchend', handlePointerUp);
-    };
-  }, [isDragging, id, onDrag, onDragEnd]);
+      document.removeEventListener('mousemove', handlePointerMove)
+      document.removeEventListener('mouseup', handlePointerUp)
+      document.removeEventListener('touchmove', handlePointerMove)
+      document.removeEventListener('touchend', handlePointerUp)
+    }
+  }, [isDragging, id, onDrag, onDragEnd])
 
   return (
     <div
@@ -65,7 +77,7 @@ export default function MapNode({ id, title, description, connectionCount, posit
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        borderColor: iconBgColor
+        borderColor: iconBgColor,
       }}
       onMouseDown={handlePointerDown}
       onTouchStart={handlePointerDown}
@@ -73,13 +85,20 @@ export default function MapNode({ id, title, description, connectionCount, posit
     >
       {!isDraggingDisabled && (
         <div className="map-node-drag-handle">
-          <svg className="drag-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="4" cy="4" r="1.33333" fill="#030303"/>
-            <circle cx="4" cy="8" r="1.33333" fill="#030303"/>
-            <circle cx="4" cy="12" r="1.33333" fill="#030303"/>
-            <circle cx="8" cy="4" r="1.33333" fill="#030303"/>
-            <circle cx="8" cy="8" r="1.33333" fill="#030303"/>
-            <circle cx="8" cy="12" r="1.33333" fill="#030303"/>
+          <svg
+            className="drag-icon"
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="4" cy="4" r="1.33333" fill="#030303" />
+            <circle cx="4" cy="8" r="1.33333" fill="#030303" />
+            <circle cx="4" cy="12" r="1.33333" fill="#030303" />
+            <circle cx="8" cy="4" r="1.33333" fill="#030303" />
+            <circle cx="8" cy="8" r="1.33333" fill="#030303" />
+            <circle cx="8" cy="12" r="1.33333" fill="#030303" />
           </svg>
         </div>
       )}
@@ -102,5 +121,7 @@ export default function MapNode({ id, title, description, connectionCount, posit
         </div>
       )}
     </div>
-  );
+  )
 }
+
+export default memo(MapNode)

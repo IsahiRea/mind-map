@@ -1,190 +1,196 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { nodesService } from '../services/nodesService'
 import { connectionsService } from '../services/connectionsService'
 
 /**
- * Custom hook for managing learning nodes and connections
+ * Transform and process nodes and connections data
+ */
+function transformNodesAndConnections(nodesData, connectionsData) {
+  // Transform nodes to component format
+  const transformedNodes = nodesData.map(node => ({
+    id: node.id,
+    title: node.title,
+    description: node.description,
+    position: node.position,
+    connectionCount: 0, // Will be calculated from connections
+  }))
+
+  // Calculate connection counts
+  const connectionCounts = {}
+  connectionsData.forEach(conn => {
+    connectionCounts[conn.from_node_id] = (connectionCounts[conn.from_node_id] || 0) + 1
+    connectionCounts[conn.to_node_id] = (connectionCounts[conn.to_node_id] || 0) + 1
+  })
+
+  // Update nodes with connection counts
+  transformedNodes.forEach(node => {
+    node.connectionCount = connectionCounts[node.id] || 0
+  })
+
+  // Transform connections to component format
+  const transformedConnections = connectionsData.map(conn => ({
+    id: conn.id,
+    from: conn.from_node_id,
+    to: conn.to_node_id,
+  }))
+
+  return { nodes: transformedNodes, connections: transformedConnections }
+}
+
+/**
+ * Custom hook for managing learning nodes and connections with React Query
  * @param {string} topicId - Topic UUID
  * @returns {Object} Nodes state and operations
  */
 export function useNodes(topicId) {
-  const [nodes, setNodes] = useState([])
-  const [connections, setConnections] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const queryClient = useQueryClient()
 
-  // Load nodes and connections
-  const loadNodesAndConnections = useCallback(async () => {
-    if (!topicId) return
+  // Fetch nodes and connections with React Query
+  const {
+    data = { nodes: [], connections: [] },
+    isLoading: loading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['nodes', topicId],
+    queryFn: async () => {
+      if (!topicId) return { nodes: [], connections: [] }
 
-    try {
-      setLoading(true)
-      setError(null)
-
-      // Load nodes and connections in parallel
       const [nodesData, connectionsData] = await Promise.all([
         nodesService.getByTopicId(topicId),
-        connectionsService.getByTopicId(topicId)
+        connectionsService.getByTopicId(topicId),
       ])
 
-      // Transform nodes to component format
-      const transformedNodes = nodesData.map(node => ({
-        id: node.id,
-        title: node.title,
-        description: node.description,
-        position: node.position,
-        connectionCount: 0 // Will be calculated from connections
-      }))
+      return transformNodesAndConnections(nodesData, connectionsData)
+    },
+    enabled: !!topicId,
+  })
 
-      // Calculate connection counts
-      const connectionCounts = {}
-      connectionsData.forEach(conn => {
-        connectionCounts[conn.from_node_id] = (connectionCounts[conn.from_node_id] || 0) + 1
-        connectionCounts[conn.to_node_id] = (connectionCounts[conn.to_node_id] || 0) + 1
-      })
+  const { nodes, connections } = data
 
-      // Update nodes with connection counts
-      transformedNodes.forEach(node => {
-        node.connectionCount = connectionCounts[node.id] || 0
-      })
-
-      // Transform connections to component format
-      const transformedConnections = connectionsData.map(conn => ({
-        id: conn.id,
-        from: conn.from_node_id,
-        to: conn.to_node_id
-      }))
-
-      setNodes(transformedNodes)
-      setConnections(transformedConnections)
-    } catch (err) {
-      console.error('Error loading nodes and connections:', err)
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }, [topicId])
-
-  useEffect(() => {
-    loadNodesAndConnections()
-  }, [loadNodesAndConnections])
-
-  /**
-   * Create a new node
-   * @param {Object} nodeData - Node data
-   * @param {Array} connectionIds - Array of node IDs to connect to
-   * @returns {Promise<Object>} Created node
-   */
-  async function createNode(nodeData, connectionIds = []) {
-    try {
-      // Create the node
+  // Create node mutation
+  const createNodeMutation = useMutation({
+    mutationFn: async ({ nodeData, connectionIds }) => {
       const newNode = await nodesService.create({
         topicId,
         title: nodeData.title,
         description: nodeData.description || nodeData.notes,
-        position: nodeData.position || { x: 300, y: 300 }
+        position: nodeData.position || { x: 300, y: 300 },
       })
 
-      // Create connections if provided
       if (connectionIds.length > 0) {
-        const connectionPromises = connectionIds.map(connectedNodeId =>
-          connectionsService.create(newNode.id, connectedNodeId)
+        await Promise.all(
+          connectionIds.map(connectedNodeId =>
+            connectionsService.create(newNode.id, connectedNodeId)
+          )
         )
-        await Promise.all(connectionPromises)
       }
 
-      // Reload to get fresh data with connection counts
-      await loadNodesAndConnections()
-
       return newNode
-    } catch (err) {
-      console.error('Error creating node:', err)
-      setError(err.message)
-      throw err
-    }
-  }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['nodes', topicId] })
+    },
+  })
 
-  /**
-   * Update a node
-   * @param {string} id - Node ID
-   * @param {Object} updates - Fields to update
-   */
-  async function updateNode(id, updates) {
-    try {
-      await nodesService.update(id, updates)
+  // Update node mutation
+  const updateNodeMutation = useMutation({
+    mutationFn: ({ id, updates }) => nodesService.update(id, updates),
+    onMutate: async ({ id, updates }) => {
+      // Optimistic update
+      await queryClient.cancelQueries({ queryKey: ['nodes', topicId] })
+      const previousData = queryClient.getQueryData(['nodes', topicId])
 
-      setNodes(prev =>
-        prev.map(n =>
-          n.id === id ? { ...n, ...updates } : n
-        )
+      queryClient.setQueryData(['nodes', topicId], old => ({
+        ...old,
+        nodes: old.nodes.map(n => (n.id === id ? { ...n, ...updates } : n)),
+      }))
+
+      return { previousData }
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(['nodes', topicId], context.previousData)
+    },
+  })
+
+  // Update node position mutation (for dragging)
+  const updatePositionMutation = useMutation({
+    mutationFn: ({ id, position }) => nodesService.updatePosition(id, position),
+    onMutate: async ({ id, position }) => {
+      // Optimistic update for smooth UX
+      await queryClient.cancelQueries({ queryKey: ['nodes', topicId] })
+      const previousData = queryClient.getQueryData(['nodes', topicId])
+
+      queryClient.setQueryData(['nodes', topicId], old => ({
+        ...old,
+        nodes: old.nodes.map(n => (n.id === id ? { ...n, position } : n)),
+      }))
+
+      return { previousData }
+    },
+    onError: (err, variables, context) => {
+      // Revert on error
+      queryClient.setQueryData(['nodes', topicId], context.previousData)
+    },
+  })
+
+  // Delete node mutation
+  const deleteNodeMutation = useMutation({
+    mutationFn: nodesService.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['nodes', topicId] })
+    },
+  })
+
+  // Connection mutations
+  const addConnectionMutation = useMutation({
+    mutationFn: ({ fromNodeId, toNodeId }) => connectionsService.create(fromNodeId, toNodeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['nodes', topicId] })
+    },
+  })
+
+  const removeConnectionMutation = useMutation({
+    mutationFn: ({ fromNodeId, toNodeId }) => connectionsService.delete(fromNodeId, toNodeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['nodes', topicId] })
+    },
+  })
+
+  const updateConnectionsMutation = useMutation({
+    mutationFn: async ({ nodeId, newConnectionIds }) => {
+      const currentConnections = connections.filter(
+        conn => conn.from === nodeId || conn.to === nodeId
       )
-    } catch (err) {
-      console.error('Error updating node:', err)
-      setError(err.message)
-      throw err
-    }
-  }
 
-  /**
-   * Update node position locally (for dragging)
-   * @param {string} id - Node ID
-   * @param {Object} position - New position {x, y}
-   */
-  function updateNodePositionLocal(id, position) {
-    // Update local state immediately for smooth UX during dragging
-    setNodes(prev =>
-      prev.map(n =>
-        n.id === id ? { ...n, position } : n
-      )
-    )
-  }
-
-  /**
-   * Update node position and save to database
-   * @param {string} id - Node ID
-   * @param {Object} position - New position {x, y}
-   */
-  async function updateNodePosition(id, position) {
-    try {
-      // Update local state immediately for smooth UX
-      setNodes(prev =>
-        prev.map(n =>
-          n.id === id ? { ...n, position } : n
-        )
+      const currentConnectionIds = currentConnections.map(conn =>
+        conn.from === nodeId ? conn.to : conn.from
       )
 
-      // Update in database
-      await nodesService.updatePosition(id, position)
-    } catch (err) {
-      console.error('Error updating node position:', err)
-      // Don't set error for position updates to avoid disrupting UX
-    }
-  }
+      const toAdd = newConnectionIds.filter(id => !currentConnectionIds.includes(id))
+      const toRemove = currentConnectionIds.filter(id => !newConnectionIds.includes(id))
 
-  /**
-   * Delete a node
-   * @param {string} id - Node ID
-   */
-  async function deleteNode(id) {
-    try {
-      await nodesService.delete(id)
+      const addPromises = toAdd.map(id => connectionsService.create(nodeId, id))
+      const removePromises = toRemove
+        .map(id => {
+          const conn = currentConnections.find(
+            c => (c.from === nodeId && c.to === id) || (c.from === id && c.to === nodeId)
+          )
+          if (conn) {
+            return connectionsService.delete(conn.from, conn.to)
+          }
+        })
+        .filter(Boolean)
 
-      // Remove from local state
-      setNodes(prev => prev.filter(n => n.id !== id))
-      setConnections(prev =>
-        prev.filter(c => c.from !== id && c.to !== id)
-      )
-    } catch (err) {
-      console.error('Error deleting node:', err)
-      setError(err.message)
-      throw err
-    }
-  }
+      await Promise.all([...addPromises, ...removePromises])
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['nodes', topicId] })
+    },
+  })
 
   /**
    * Get connected nodes for a specific node
-   * @param {string} nodeId - Node ID
-   * @returns {Array} Array of connected nodes
    */
   function getConnectedNodes(nodeId) {
     const connectedNodeIds = connections
@@ -196,101 +202,40 @@ export function useNodes(topicId) {
 
   /**
    * Get node by ID
-   * @param {string} id - Node ID
-   * @returns {Object|undefined} Node object
    */
   function getNodeById(id) {
     return nodes.find(node => node.id === id)
   }
 
   /**
-   * Add a connection between two nodes
-   * @param {string} fromNodeId - Source node ID
-   * @param {string} toNodeId - Target node ID
+   * Update node position locally (for smooth dragging UX)
    */
-  async function addConnection(fromNodeId, toNodeId) {
-    try {
-      await connectionsService.create(fromNodeId, toNodeId)
-      await loadNodesAndConnections()
-    } catch (err) {
-      console.error('Error adding connection:', err)
-      setError(err.message)
-      throw err
-    }
-  }
-
-  /**
-   * Remove a connection between two nodes
-   * @param {string} fromNodeId - Source node ID
-   * @param {string} toNodeId - Target node ID
-   */
-  async function removeConnection(fromNodeId, toNodeId) {
-    try {
-      await connectionsService.delete(fromNodeId, toNodeId)
-      await loadNodesAndConnections()
-    } catch (err) {
-      console.error('Error removing connection:', err)
-      setError(err.message)
-      throw err
-    }
-  }
-
-  /**
-   * Update connections for a node
-   * @param {string} nodeId - Node ID
-   * @param {Array} newConnectionIds - Array of node IDs that should be connected
-   */
-  async function updateConnections(nodeId, newConnectionIds) {
-    try {
-      // Get current connections
-      const currentConnections = connections.filter(
-        conn => conn.from === nodeId || conn.to === nodeId
-      )
-
-      const currentConnectionIds = currentConnections.map(conn =>
-        conn.from === nodeId ? conn.to : conn.from
-      )
-
-      // Find connections to add and remove
-      const toAdd = newConnectionIds.filter(id => !currentConnectionIds.includes(id))
-      const toRemove = currentConnectionIds.filter(id => !newConnectionIds.includes(id))
-
-      // Execute additions and removals
-      const addPromises = toAdd.map(id => connectionsService.create(nodeId, id))
-      const removePromises = toRemove.map(id => {
-        // Need to handle both directions
-        const conn = currentConnections.find(c =>
-          (c.from === nodeId && c.to === id) || (c.from === id && c.to === nodeId)
-        )
-        if (conn) {
-          return connectionsService.delete(conn.from, conn.to)
-        }
-      }).filter(Boolean)
-
-      await Promise.all([...addPromises, ...removePromises])
-      await loadNodesAndConnections()
-    } catch (err) {
-      console.error('Error updating connections:', err)
-      setError(err.message)
-      throw err
-    }
+  function updateNodePositionLocal(id, position) {
+    queryClient.setQueryData(['nodes', topicId], old => ({
+      ...old,
+      nodes: old.nodes.map(n => (n.id === id ? { ...n, position } : n)),
+    }))
   }
 
   return {
     nodes,
     connections,
     loading,
-    error,
-    createNode,
-    updateNode,
+    error: error?.message || null,
+    createNode: (nodeData, connectionIds = []) =>
+      createNodeMutation.mutateAsync({ nodeData, connectionIds }),
+    updateNode: (id, updates) => updateNodeMutation.mutateAsync({ id, updates }),
     updateNodePositionLocal,
-    updateNodePosition,
-    deleteNode,
+    updateNodePosition: (id, position) => updatePositionMutation.mutateAsync({ id, position }),
+    deleteNode: deleteNodeMutation.mutateAsync,
     getConnectedNodes,
     getNodeById,
-    addConnection,
-    removeConnection,
-    updateConnections,
-    refresh: loadNodesAndConnections
+    addConnection: (fromNodeId, toNodeId) =>
+      addConnectionMutation.mutateAsync({ fromNodeId, toNodeId }),
+    removeConnection: (fromNodeId, toNodeId) =>
+      removeConnectionMutation.mutateAsync({ fromNodeId, toNodeId }),
+    updateConnections: (nodeId, newConnectionIds) =>
+      updateConnectionsMutation.mutateAsync({ nodeId, newConnectionIds }),
+    refresh: refetch,
   }
 }

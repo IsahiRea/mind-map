@@ -1,21 +1,22 @@
-import '../css/components/ConnectionLine.css';
+import { memo } from 'react'
+import '../css/components/ConnectionLine.css'
 
-export default function ConnectionLine({ fromNode, toNode }) {
+function ConnectionLine({ fromNode, toNode }) {
   // Calculate the center points of each node
-  const fromX = fromNode.position.x + 100; // 100 is half the node width (200px)
-  const fromY = fromNode.position.y + 96.5; // Approximate center height
-  const toX = toNode.position.x + 100;
-  const toY = toNode.position.y + 96.5;
+  const fromX = fromNode.position.x + 100 // 100 is half the node width (200px)
+  const fromY = fromNode.position.y + 96.5 // Approximate center height
+  const toX = toNode.position.x + 100
+  const toY = toNode.position.y + 96.5
 
   // Calculate control points for the curve
-  const controlPointOffset = Math.abs(toX - fromX) * 0.5;
-  const controlPoint1X = fromX + controlPointOffset;
-  const controlPoint1Y = fromY;
-  const controlPoint2X = toX - controlPointOffset;
-  const controlPoint2Y = toY;
+  const controlPointOffset = Math.abs(toX - fromX) * 0.5
+  const controlPoint1X = fromX + controlPointOffset
+  const controlPoint1Y = fromY
+  const controlPoint2X = toX - controlPointOffset
+  const controlPoint2Y = toY
 
   // Create the SVG path for a curved line
-  const path = `M ${fromX} ${fromY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${toX} ${toY}`;
+  const path = `M ${fromX} ${fromY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${toX} ${toY}`
 
   return (
     <svg className="connection-line-svg">
@@ -28,5 +29,7 @@ export default function ConnectionLine({ fromNode, toNode }) {
         strokeLinecap="round"
       />
     </svg>
-  );
+  )
 }
+
+export default memo(ConnectionLine)

@@ -1,5 +1,7 @@
+import React from 'react'
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useNodes } from '../useNodes'
 import { nodesService } from '../../services/nodesService'
 import { connectionsService } from '../../services/connectionsService'
@@ -8,13 +10,26 @@ import { connectionsService } from '../../services/connectionsService'
 vi.mock('../../services/nodesService')
 vi.mock('../../services/connectionsService')
 
+// Create a wrapper with QueryClientProvider
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  })
+  return ({ children }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children)
+}
+
 describe('useNodes', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('should initialize with empty nodes and connections', () => {
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     expect(result.current.nodes).toEqual([])
     expect(result.current.connections).toEqual([])
@@ -22,7 +37,7 @@ describe('useNodes', () => {
   })
 
   it('should not load if no topicId is provided', async () => {
-    const { result } = renderHook(() => useNodes(null))
+    const { result } = renderHook(() => useNodes(null), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(true)
@@ -59,7 +74,7 @@ describe('useNodes', () => {
     nodesService.getByTopicId.mockResolvedValue(mockNodes)
     connectionsService.getByTopicId.mockResolvedValue(mockConnections)
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -101,7 +116,7 @@ describe('useNodes', () => {
     nodesService.getByTopicId.mockResolvedValue(mockNodes)
     connectionsService.getByTopicId.mockResolvedValue(mockConnections)
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -120,7 +135,7 @@ describe('useNodes', () => {
     const mockError = new Error('Failed to load nodes')
     nodesService.getByTopicId.mockRejectedValue(mockError)
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -133,7 +148,7 @@ describe('useNodes', () => {
     nodesService.getByTopicId.mockResolvedValue([])
     connectionsService.getByTopicId.mockResolvedValue([])
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -181,7 +196,7 @@ describe('useNodes', () => {
     nodesService.getByTopicId.mockResolvedValue([existingNode])
     connectionsService.getByTopicId.mockResolvedValue([])
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -225,7 +240,7 @@ describe('useNodes', () => {
     connectionsService.getByTopicId.mockResolvedValue([])
     nodesService.update.mockResolvedValue({})
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -252,7 +267,7 @@ describe('useNodes', () => {
     nodesService.getByTopicId.mockResolvedValue(mockNodes)
     connectionsService.getByTopicId.mockResolvedValue([])
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -277,7 +292,7 @@ describe('useNodes', () => {
     connectionsService.getByTopicId.mockResolvedValue(mockConnections)
     nodesService.delete.mockResolvedValue()
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -307,7 +322,7 @@ describe('useNodes', () => {
     nodesService.getByTopicId.mockResolvedValue(mockNodes)
     connectionsService.getByTopicId.mockResolvedValue(mockConnections)
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -328,7 +343,7 @@ describe('useNodes', () => {
     nodesService.getByTopicId.mockResolvedValue(mockNodes)
     connectionsService.getByTopicId.mockResolvedValue([])
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -350,7 +365,7 @@ describe('useNodes', () => {
     connectionsService.getByTopicId.mockResolvedValue([])
     connectionsService.create.mockResolvedValue({})
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
@@ -375,7 +390,7 @@ describe('useNodes', () => {
     connectionsService.getByTopicId.mockResolvedValue(mockConnections)
     connectionsService.delete.mockResolvedValue()
 
-    const { result } = renderHook(() => useNodes('topic-123'))
+    const { result } = renderHook(() => useNodes('topic-123'), { wrapper: createWrapper() })
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false)
