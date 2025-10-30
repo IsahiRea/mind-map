@@ -50,7 +50,6 @@
   width: 48px;
   height: 48px;
   min-width: 48px;
-  background-color: rgba(59, 130, 246, 0.13);
   border-radius: 0.625rem;
   display: flex;
   align-items: center;
@@ -62,7 +61,6 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background-color: #3b82f6;
 }
 
 .add-node-header-content {
@@ -98,8 +96,6 @@
 .add-node-topic-badge {
   display: inline-block;
   padding: 0.1875rem 0.5625rem;
-  background-color: rgba(59, 130, 246, 0.13);
-  color: #3b82f6;
   font-size: 0.75rem;
   line-height: 1.33;
   border-radius: 0.5rem;

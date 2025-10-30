@@ -311,14 +311,14 @@
 }
 
 .node-details-save-btn {
-  background-color: #3b82f6;
+  background-color: #030213;
   color: #ffffff;
-  border-color: #3b82f6;
+  border-color: #030213;
 }
 
 .node-details-save-btn:hover {
-  background-color: #2563eb;
-  border-color: #2563eb;
+  background-color: #1a1a2e;
+  border-color: #1a1a2e;
 }
 
 .node-details-save-btn:disabled {

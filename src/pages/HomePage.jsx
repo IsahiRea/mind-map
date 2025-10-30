@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import TopicCard from '../components/TopicCard';
 import NewTopicModal from '../components/NewTopicModal';
 import DeleteTopicModal from '../components/DeleteTopicModal';
+import { TopicCardSkeleton } from '../components/Skeleton';
 import plusIcon from '../assets/icons/plus.svg';
 import '../css/pages/HomePage.css';
 
@@ -56,8 +57,13 @@ export default function HomePage() {
           <div className="content-header">
             <div className="content-title-section">
               <h2 className="content-title">Your Learning Topics</h2>
-              <p className="content-subtitle">Loading...</p>
+              <p className="content-subtitle">Loading your topics...</p>
             </div>
+          </div>
+          <div className="topics-grid">
+            {[...Array(6)].map((_, i) => (
+              <TopicCardSkeleton key={i} />
+            ))}
           </div>
         </main>
       </div>

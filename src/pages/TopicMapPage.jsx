@@ -7,10 +7,10 @@ import MapNode from '../components/MapNode';
 import ConnectionLine from '../components/ConnectionLine';
 import AddNodeModal from '../components/AddNodeModal';
 import NodeDetailsModal from '../components/NodeDetailsModal';
+import LoadingSpinner from '../components/LoadingSpinner';
 import backIcon from '../assets/icons/back.svg';
 import zoomInIcon from '../assets/icons/zoom-in.svg';
 import zoomOutIcon from '../assets/icons/zoom-out.svg';
-import plusIcon from '../assets/icons/plus.svg';
 import '../css/pages/TopicMapPage.css';
 
 export default function TopicMapPage() {
@@ -154,7 +154,7 @@ export default function TopicMapPage() {
         </header>
         <main className="topic-map-canvas">
           <div className="canvas-container">
-            <p style={{ padding: '2rem', textAlign: 'center' }}>Loading...</p>
+            <LoadingSpinner size="large" text="Loading topic map..." />
           </div>
         </main>
       </div>
@@ -223,7 +223,11 @@ export default function TopicMapPage() {
 
           {!isVisitorMode && (
             <button className="add-node-btn" onClick={() => setIsAddNodeModalOpen(true)}>
-              <img src={plusIcon} alt="" className="add-node-icon" />
+              <svg className="add-node-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="8" cy="8" r="7.5" fill="white" stroke={topic.iconColor} strokeWidth="1"/>
+                <path d="M3.33333 8H12.6667" stroke={topic.iconColor} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M8 3.33333V12.6667" stroke={topic.iconColor} strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
               <span>Add Node</span>
             </button>
           )}
@@ -264,6 +268,8 @@ export default function TopicMapPage() {
                   onDragEnd={handleNodeDragEnd}
                   onClick={() => handleNodeClick(node.id)}
                   isDraggingDisabled={isVisitorMode}
+                  iconBgColor={topic.iconBgColor}
+                  iconColor={topic.iconColor}
                 />
               ))}
             </div>
@@ -277,6 +283,8 @@ export default function TopicMapPage() {
         onClose={() => setIsAddNodeModalOpen(false)}
         onSubmit={handleAddNode}
         topicTitle={topic.title}
+        topicIconBgColor={topic.iconBgColor}
+        topicIconColor={topic.iconColor}
         existingNodes={nodes}
       />
 
@@ -289,6 +297,8 @@ export default function TopicMapPage() {
         }}
         node={selectedNode}
         topicTitle={topic.title}
+        topicIconBgColor={topic.iconBgColor}
+        topicIconColor={topic.iconColor}
         connectedNodes={selectedNode ? getConnectedNodes(selectedNode.id) : []}
         availableNodes={nodes}
         onSave={handleSaveNode}

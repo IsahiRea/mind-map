@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import '../css/components/MapNode.css';
 
-export default function MapNode({ id, title, description, connectionCount, position, onDrag, onDragEnd, onClick, isDraggingDisabled = false }) {
+export default function MapNode({ id, title, description, connectionCount, position, onDrag, onDragEnd, onClick, isDraggingDisabled = false, iconBgColor, iconColor }) {
   const nodeRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const dragOffsetRef = useRef({ x: 0, y: 0 });
@@ -62,7 +62,11 @@ export default function MapNode({ id, title, description, connectionCount, posit
     <div
       ref={nodeRef}
       className={`map-node ${isDragging ? 'dragging' : ''}`}
-      style={{ left: `${position.x}px`, top: `${position.y}px` }}
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        borderColor: iconBgColor
+      }}
       onMouseDown={handlePointerDown}
       onTouchStart={handlePointerDown}
       onClick={handleClick}
@@ -81,8 +85,8 @@ export default function MapNode({ id, title, description, connectionCount, posit
       )}
 
       <div className="map-node-content">
-        <div className="map-node-icon-wrapper">
-          <div className="map-node-icon"></div>
+        <div className="map-node-icon-wrapper" style={{ backgroundColor: iconBgColor }}>
+          <div className="map-node-icon" style={{ backgroundColor: iconColor }}></div>
         </div>
 
         <h4 className="map-node-title">{title}</h4>
@@ -91,7 +95,7 @@ export default function MapNode({ id, title, description, connectionCount, posit
       </div>
 
       {connectionCount !== undefined && (
-        <div className="map-node-footer">
+        <div className="map-node-footer" style={{ borderTopColor: iconBgColor }}>
           <p className="map-node-connection-count">
             {connectionCount} connection{connectionCount !== 1 ? 's' : ''}
           </p>

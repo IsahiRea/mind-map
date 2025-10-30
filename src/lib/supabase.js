@@ -1,12 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
+import { env } from './env'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error(
-    'Missing Supabase environment variables. Please check your .env.local file.'
-  )
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Environment variables are validated at app startup in main.jsx
+// so we can safely use them here
+export const supabase = createClient(env.supabaseUrl, env.supabaseAnonKey)

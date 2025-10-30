@@ -8,6 +8,8 @@ export default function NodeDetailsModal({
   onClose,
   node,
   topicTitle,
+  topicIconBgColor,
+  topicIconColor,
   connectedNodes,
   availableNodes,
   onSave,
@@ -88,8 +90,8 @@ export default function NodeDetailsModal({
 
         <div className="node-details-header">
           <div className="node-details-header-content">
-            <div className="node-details-icon-wrapper">
-              <div className="node-details-icon"></div>
+            <div className="node-details-icon-wrapper" style={{ backgroundColor: topicIconBgColor }}>
+              <div className="node-details-icon" style={{ backgroundColor: topicIconColor }}></div>
             </div>
             <div className="node-details-title-section">
               {isEditMode ? (
@@ -104,7 +106,10 @@ export default function NodeDetailsModal({
               ) : (
                 <h2 className="node-details-title">{node.title}</h2>
               )}
-              <div className="node-details-topic-badge">
+              <div className="node-details-topic-badge" style={{
+                backgroundColor: topicIconBgColor,
+                color: topicIconColor
+              }}>
                 {topicTitle}
               </div>
             </div>

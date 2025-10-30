@@ -3,7 +3,7 @@ import Modal from './Modal';
 import xIcon from '../assets/icons/x.svg';
 import '../css/components/AddNodeModal.css';
 
-export default function AddNodeModal({ isOpen, onClose, onSubmit, topicTitle, existingNodes }) {
+export default function AddNodeModal({ isOpen, onClose, onSubmit, topicTitle, topicIconBgColor, topicIconColor, existingNodes }) {
   const [title, setTitle] = useState('');
   const [notes, setNotes] = useState('');
   const [selectedConnections, setSelectedConnections] = useState([]);
@@ -49,8 +49,8 @@ export default function AddNodeModal({ isOpen, onClose, onSubmit, topicTitle, ex
         </button>
 
         <div className="add-node-modal-header">
-          <div className="add-node-icon-wrapper">
-            <div className="add-node-icon"></div>
+          <div className="add-node-icon-wrapper" style={{ backgroundColor: topicIconBgColor }}>
+            <div className="add-node-icon" style={{ backgroundColor: topicIconColor }}></div>
           </div>
           <div className="add-node-header-content">
             <input
@@ -61,7 +61,10 @@ export default function AddNodeModal({ isOpen, onClose, onSubmit, topicTitle, ex
               onChange={(e) => setTitle(e.target.value)}
               autoFocus
             />
-            <div className="add-node-topic-badge">
+            <div className="add-node-topic-badge" style={{
+              backgroundColor: topicIconBgColor,
+              color: topicIconColor
+            }}>
               {topicTitle}
             </div>
           </div>
