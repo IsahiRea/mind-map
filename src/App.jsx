@@ -1,16 +1,15 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { VisitorModeProvider } from './context/VisitorModeContext'
+import { VisitorModeProvider } from './features/auth/context/VisitorModeContext'
 import { queryClient } from './lib/queryClient'
-import ErrorBoundary from './components/ErrorBoundary'
-import LoadingSpinner from './components/LoadingSpinner'
+import { ErrorBoundary, LoadingSpinner } from './shared'
 import './css/App.css'
 
 // Lazy load page components for code splitting
-const HomePage = lazy(() => import('./pages/HomePage'))
-const TopicMapPage = lazy(() => import('./pages/TopicMapPage'))
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
+const HomePage = lazy(() => import('./features/topics/pages/HomePage'))
+const TopicMapPage = lazy(() => import('./features/nodes/pages/TopicMapPage'))
+const NotFoundPage = lazy(() => import('./shared/components/NotFoundPage'))
 
 function App() {
   return (
