@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useVisitorMode } from '../context/VisitorModeContext'
 import { useNodes } from '../hooks/useNodes'
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts'
 import { topicsService } from '../services/topicsService'
 import MapNode from '../components/MapNode'
 import ConnectionLine from '../components/ConnectionLine'
@@ -158,6 +159,35 @@ export default function TopicMapPage() {
       })
       .filter(Boolean)
   }, [connections, getNodeById])
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts(
+    {
+      'Ctrl+n': () => {
+        if (!isVisitorMode) {
+          setIsAddNodeModalOpen(true)
+        }
+      },
+      '+': () => handleZoomIn(),
+      '=': () => handleZoomIn(), // Alternative for +
+      '-': () => handleZoomOut(),
+      Escape: () => {
+        if (isAddNodeModalOpen) {
+          setIsAddNodeModalOpen(false)
+        }
+        if (isNodeDetailsModalOpen) {
+          setIsNodeDetailsModalOpen(false)
+          setSelectedNode(null)
+        }
+      },
+      Delete: () => {
+        if (selectedNode && !isVisitorMode) {
+          handleDeleteNode()
+        }
+      },
+    },
+    !loadingTopic && !nodesLoading
+  )
 
   if (loadingTopic || nodesLoading) {
     return (
