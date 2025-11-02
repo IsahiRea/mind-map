@@ -12,6 +12,28 @@ A modern mind-map application for tracking your learning journey. Built with Rea
 - **Visitor Mode** - Explore the app without authentication
 - **Responsive Design** - Mobile-first approach with responsive layouts
 
+## Screenshots
+
+### Home Page
+
+![Home Page](screenshots/home-page.png)
+_Browse and manage your learning topics with search and sorting capabilities_
+
+### Topic Mind Map
+
+![Topic Mind Map](screenshots/topic-map.png)
+_Interactive mind map showing learning nodes and their connections_
+
+### Node Details
+
+![Node Details Modal](screenshots/node-details-modal.png)
+_View detailed information about learning nodes and their connections_
+
+### Authentication
+
+![Auth Modal](screenshots/auth-modal.png)
+_Owner sign-in modal for authenticated access_
+
 ## Tech Stack
 
 - **React** 19.1.1 - Modern React with StrictMode
