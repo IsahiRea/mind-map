@@ -2,6 +2,8 @@
 
 A modern mind-map application for tracking your learning journey. Built with React 19 and Vite, featuring an intuitive interface for creating topics, adding learning nodes, and visualizing connections between concepts.
 
+🔗 **[Live Demo](https://mind-map-flax.vercel.app/)**
+
 ## Features
 
 - **Topic Management** - Create and organize learning topics with custom colors
