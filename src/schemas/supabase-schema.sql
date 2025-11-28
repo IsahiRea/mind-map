@@ -1,6 +1,10 @@
 -- Mind-Map Application Database Schema
 -- Run this SQL in your Supabase SQL Editor
 
+-- IMPORTANT: Security Configuration (Configure in Supabase Dashboard)
+-- 1. Enable "Leaked Password Protection" in Authentication > Settings
+--    This checks passwords against HaveIBeenPwned.org to prevent compromised passwords
+
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -42,7 +46,9 @@ CREATE INDEX idx_node_connections_from ON node_connections(from_node_id);
 CREATE INDEX idx_node_connections_to ON node_connections(to_node_id);
 
 -- View for topic with node count
-CREATE VIEW topics_with_counts AS
+-- Using SECURITY INVOKER to respect RLS policies of the querying user
+CREATE VIEW topics_with_counts
+WITH (security_invoker = true) AS
 SELECT
   t.*,
   COUNT(ln.id)::INTEGER as node_count
@@ -51,21 +57,33 @@ LEFT JOIN learning_nodes ln ON t.id = ln.topic_id
 GROUP BY t.id;
 
 -- Function to get node connection count
+-- Using SECURITY INVOKER to respect RLS policies of the querying user
+-- SET search_path prevents SQL injection through schema manipulation
 CREATE OR REPLACE FUNCTION get_node_connection_count(node_id UUID)
-RETURNS INTEGER AS $$
+RETURNS INTEGER
+LANGUAGE SQL
+STABLE
+SECURITY INVOKER
+SET search_path = public
+AS $$
   SELECT COUNT(*)::INTEGER
   FROM node_connections
   WHERE from_node_id = node_id OR to_node_id = node_id;
-$$ LANGUAGE SQL STABLE;
+$$;
 
 -- Trigger function to update updated_at timestamp
+-- SET search_path prevents SQL injection through schema manipulation
 CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY INVOKER
+SET search_path = public
+AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Triggers for auto-updating updated_at
 CREATE TRIGGER update_topics_updated_at
