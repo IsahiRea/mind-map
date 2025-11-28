@@ -158,17 +158,6 @@ Tests are colocated with source files in `__tests__` directories.
 3. Ensure tests pass and linting is clean
 4. Push your branch and create a pull request
 
-## Refactoring Phases
-
-This project has undergone systematic refactoring:
-
-- ✅ **Phase 1-2**: TypeScript setup, error boundaries, loading states
-- ✅ **Phase 3**: Performance optimizations (React Query, memoization)
-- ✅ **Phase 4**: Search, filters, keyboard shortcuts
-- ✅ **Phase 5**: Feature-based architecture, reusable components, custom hooks
-
-See [REFACTORING_GUIDE.md](./docs/REFACTORING_GUIDE.md) for details.
-
 ## License
 
 This is a portfolio project. Feel free to use it as inspiration for your own projects!
