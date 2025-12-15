@@ -4,14 +4,14 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--color-bg-primary);
 }
 
 /* Header */
 .topic-map-header {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--color-header-bg);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--color-border-light);
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -35,13 +35,13 @@
   cursor: pointer;
   font-family: 'Arimo', sans-serif;
   font-size: 0.875rem;
-  color: #0a0a0a;
+  color: var(--color-text-primary);
   border-radius: 0.5rem;
   transition: background-color 0.2s;
 }
 
 .back-btn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--color-bg-tertiary);
 }
 
 .back-icon {
@@ -52,7 +52,7 @@
 .header-divider {
   width: 1px;
   height: 2rem;
-  background-color: #e2e8f0;
+  background-color: var(--color-border-default);
 }
 
 .topic-info {
@@ -91,7 +91,7 @@
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #0a0a0a;
+  color: var(--color-text-primary);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -101,7 +101,7 @@
 .topic-info-description {
   font-size: 0.875rem;
   line-height: 1.43;
-  color: #45556c;
+  color: var(--color-text-secondary);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -117,8 +117,8 @@
 .zoom-btn {
   width: 2.375rem;
   height: 2rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
+  border: 1px solid var(--color-border-light);
+  background-color: var(--color-card-bg);
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -129,7 +129,7 @@
 }
 
 .zoom-btn:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: var(--color-bg-tertiary);
 }
 
 .zoom-icon {
@@ -145,7 +145,7 @@
 
 .zoom-display span {
   font-size: 0.875rem;
-  color: #45556c;
+  color: var(--color-text-secondary);
 }
 
 .add-node-btn {
@@ -154,8 +154,8 @@
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   border: none;
-  background-color: #030213;
-  color: #ffffff;
+  background-color: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
   cursor: pointer;
   font-family: 'Arimo', sans-serif;
   font-size: 0.875rem;
@@ -164,12 +164,17 @@
 }
 
 .add-node-btn:hover {
-  background-color: #1a1a2e;
+  background-color: var(--color-bg-inverse-hover);
 }
 
 .add-node-icon {
   width: 1rem;
   height: 1rem;
+  filter: brightness(0) invert(1);
+}
+
+[data-theme='dark'] .add-node-icon {
+  filter: brightness(0);
 }
 
 /* Canvas */
@@ -186,17 +191,12 @@
 }
 
 .canvas-background {
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.5),
-    rgba(255, 255, 255, 0.5)
-  );
+  background-color: var(--color-bg-secondary);
   border-radius: 0.875rem;
   min-height: 500px;
   position: relative;
   box-shadow: inset 0px 2px 4px 0px rgba(0, 0, 0, 0.05);
-  background-image:
-    radial-gradient(circle, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(circle, var(--color-canvas-dot) 1px, transparent 1px);
   background-size: 30px 30px;
 }
 

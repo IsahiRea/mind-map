@@ -21,8 +21,9 @@
 }
 
 .connection-path:hover {
-  stroke: rgba(59, 130, 246, 0.6);
+  stroke: var(--color-accent);
   stroke-width: 3;
+  opacity: 0.6;
 }
 
 /* Smooth animation for connection rendering */

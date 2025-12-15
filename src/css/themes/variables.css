@@ -1,0 +1,177 @@
+/* Theme Variables - Light Mode (Default) */
+:root,
+[data-theme='light'] {
+  /* Color scheme */
+  color-scheme: light;
+
+  /* Backgrounds */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f5f7;
+  --color-bg-tertiary: #f3f3f5;
+  --color-bg-inverse: #030213;
+  --color-bg-inverse-hover: #1a1a2e;
+
+  /* Text */
+  --color-text-primary: #0a0a0a;
+  --color-text-secondary: #45556c;
+  --color-text-tertiary: #62748e;
+  --color-text-muted: #717182;
+  --color-text-inverse: #ffffff;
+  --color-text-link: #155dfc;
+  --color-text-link-hover: #0e47d1;
+
+  /* Borders */
+  --color-border-default: #e5e7eb;
+  --color-border-light: rgba(0, 0, 0, 0.1);
+  --color-border-input: #d1d5db;
+
+  /* States */
+  --color-error: #ef4444;
+  --color-error-bg: #fee2e2;
+  --color-error-border: #fecaca;
+  --color-success: #059669;
+  --color-success-bg: #d1fae5;
+  --color-success-border: #a7f3d0;
+
+  /* Overlays */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-header-bg: rgba(255, 255, 255, 0.8);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* Component-specific */
+  --color-card-bg: #ffffff;
+  --color-card-border: #f0f0f0;
+  --color-card-border-hover: #e5e7eb;
+  --color-badge-bg: #eceef2;
+  --color-spinner-track: #f3f4f6;
+  --color-spinner-indicator: #4f46e5;
+  --color-canvas-dot: rgba(0, 0, 0, 0.05);
+  --color-placeholder: #9ca3af;
+  --color-skeleton-base: #f0f0f0;
+  --color-skeleton-shine: #e0e0e0;
+}
+
+/* Theme Variables - Dark Mode */
+[data-theme='dark'] {
+  /* Color scheme */
+  color-scheme: dark;
+
+  /* Backgrounds */
+  --color-bg-primary: #0f0f14;
+  --color-bg-secondary: #1a1a24;
+  --color-bg-tertiary: #252532;
+  --color-bg-inverse: #ffffff;
+  --color-bg-inverse-hover: #f0f0f0;
+
+  /* Text */
+  --color-text-primary: #f0f0f5;
+  --color-text-secondary: #a0a0b0;
+  --color-text-tertiary: #787890;
+  --color-text-muted: #606070;
+  --color-text-inverse: #0a0a0a;
+  --color-text-link: #60a5fa;
+  --color-text-link-hover: #93c5fd;
+
+  /* Borders */
+  --color-border-default: #2d2d3a;
+  --color-border-light: rgba(255, 255, 255, 0.1);
+  --color-border-input: #3d3d4a;
+
+  /* States */
+  --color-error: #f87171;
+  --color-error-bg: #450a0a;
+  --color-error-border: #7f1d1d;
+  --color-success: #34d399;
+  --color-success-bg: #064e3b;
+  --color-success-border: #065f46;
+
+  /* Overlays */
+  --color-overlay: rgba(0, 0, 0, 0.7);
+  --color-header-bg: rgba(15, 15, 20, 0.8);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* Component-specific */
+  --color-card-bg: #1a1a24;
+  --color-card-border: #2d2d3a;
+  --color-card-border-hover: #3d3d4a;
+  --color-badge-bg: #2d2d3a;
+  --color-spinner-track: #2d2d3a;
+  --color-spinner-indicator: #818cf8;
+  --color-canvas-dot: rgba(255, 255, 255, 0.08);
+  --color-placeholder: #606070;
+  --color-skeleton-base: #2d2d3a;
+  --color-skeleton-shine: #3d3d4a;
+}
+
+/* Accent Colors - Default (Blue) */
+:root {
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --color-accent-bg: rgba(59, 130, 246, 0.13);
+  --color-accent-focus: rgba(59, 130, 246, 0.2);
+}
+
+/* Accent Color Variations */
+[data-accent='blue'] {
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --color-accent-bg: rgba(59, 130, 246, 0.13);
+  --color-accent-focus: rgba(59, 130, 246, 0.2);
+}
+
+[data-accent='violet'] {
+  --color-accent: #8b5cf6;
+  --color-accent-hover: #7c3aed;
+  --color-accent-bg: rgba(139, 92, 246, 0.13);
+  --color-accent-focus: rgba(139, 92, 246, 0.2);
+}
+
+[data-accent='pink'] {
+  --color-accent: #ec4899;
+  --color-accent-hover: #db2777;
+  --color-accent-bg: rgba(236, 72, 153, 0.13);
+  --color-accent-focus: rgba(236, 72, 153, 0.2);
+}
+
+[data-accent='amber'] {
+  --color-accent: #f59e0b;
+  --color-accent-hover: #d97706;
+  --color-accent-bg: rgba(245, 158, 11, 0.13);
+  --color-accent-focus: rgba(245, 158, 11, 0.2);
+}
+
+[data-accent='emerald'] {
+  --color-accent: #10b981;
+  --color-accent-hover: #059669;
+  --color-accent-bg: rgba(16, 185, 129, 0.13);
+  --color-accent-focus: rgba(16, 185, 129, 0.2);
+}
+
+[data-accent='cyan'] {
+  --color-accent: #06b6d4;
+  --color-accent-hover: #0891b2;
+  --color-accent-bg: rgba(6, 182, 212, 0.13);
+  --color-accent-focus: rgba(6, 182, 212, 0.2);
+}
+
+[data-accent='red'] {
+  --color-accent: #ef4444;
+  --color-accent-hover: #dc2626;
+  --color-accent-bg: rgba(239, 68, 68, 0.13);
+  --color-accent-focus: rgba(239, 68, 68, 0.2);
+}
+
+[data-accent='indigo'] {
+  --color-accent: #6366f1;
+  --color-accent-hover: #4f46e5;
+  --color-accent-bg: rgba(99, 102, 241, 0.13);
+  --color-accent-focus: rgba(99, 102, 241, 0.2);
+}

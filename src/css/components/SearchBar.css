@@ -4,23 +4,23 @@
   align-items: center;
   width: 100%;
   max-width: 400px;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border-default);
   border-radius: 8px;
   padding: 0.75rem 1rem;
   transition: all 0.2s ease;
 }
 
 .search-bar:focus-within {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-focus);
 }
 
 .search-icon {
   width: 20px;
   height: 20px;
   margin-right: 0.75rem;
-  color: #6b7280;
+  color: var(--color-text-tertiary);
   flex-shrink: 0;
 }
 
@@ -29,12 +29,12 @@
   border: none;
   outline: none;
   font-size: 1rem;
-  color: #1f2937;
+  color: var(--color-text-primary);
   background: transparent;
 }
 
 .search-input::placeholder {
-  color: #9ca3af;
+  color: var(--color-placeholder);
 }
 
 .search-input::-webkit-search-cancel-button {
@@ -44,7 +44,7 @@
 .search-clear {
   background: none;
   border: none;
-  color: #6b7280;
+  color: var(--color-text-tertiary);
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
@@ -60,8 +60,8 @@
 }
 
 .search-clear:hover {
-  background: #f3f4f6;
-  color: #1f2937;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
 }
 
 /* Mobile-first responsive design */

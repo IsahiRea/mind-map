@@ -1,7 +1,7 @@
 /* NotFoundPage - Mobile First */
 .not-found-page {
   min-height: 100vh;
-  background-color: #f5f5f7;
+  background-color: var(--color-bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,7 +17,7 @@
   font-family: 'Arimo', sans-serif;
   font-size: 4rem;
   font-weight: 700;
-  color: #0a0a0a;
+  color: var(--color-text-primary);
   margin: 0 0 1rem 0;
 }
 
@@ -25,14 +25,14 @@
   font-family: 'Arimo', sans-serif;
   font-size: 1.5rem;
   font-weight: 400;
-  color: #45556c;
+  color: var(--color-text-secondary);
   margin: 0 0 2rem 0;
 }
 
 .not-found-link {
   display: inline-block;
-  background-color: #030213;
-  color: white;
+  background-color: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
   text-decoration: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -43,7 +43,7 @@
 }
 
 .not-found-link:hover {
-  background-color: #1a1a2e;
+  background-color: var(--color-bg-inverse-hover);
 }
 
 /* Responsive Design - Tablet and Desktop */

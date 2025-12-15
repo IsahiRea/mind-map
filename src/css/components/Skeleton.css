@@ -3,7 +3,12 @@
 }
 
 .skeleton-wrapper > * {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton-base) 25%,
+    var(--color-skeleton-shine) 50%,
+    var(--color-skeleton-base) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s ease-in-out infinite;
   border-radius: 0.375rem;
@@ -11,10 +16,10 @@
 
 /* Topic Card Skeleton */
 .topic-card-skeleton {
-  background: white;
+  background: var(--color-card-bg);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -61,10 +66,10 @@
 
 /* Node Skeleton */
 .node-skeleton {
-  background: white;
+  background: var(--color-card-bg);
   border-radius: 0.5rem;
   padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
   min-width: 200px;
   max-width: 300px;
   display: flex;

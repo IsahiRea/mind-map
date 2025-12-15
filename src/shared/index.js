@@ -7,9 +7,13 @@ export { default as Skeleton } from './components/Skeleton'
 export { default as SearchBar } from './components/SearchBar'
 export { default as FilterControls } from './components/FilterControls'
 export { default as NotFoundPage } from './components/NotFoundPage'
+export { default as ThemeToggle } from './components/ThemeToggle'
 
 // Form components
 export * from './components/forms'
+
+// Context
+export { ThemeProvider, useTheme } from './context/ThemeContext'
 
 // Hooks
 export { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'

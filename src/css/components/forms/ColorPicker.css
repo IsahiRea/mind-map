@@ -17,16 +17,16 @@
 
 .color-option:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .color-option.selected {
-  border-color: #1f2937;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  border-color: var(--color-text-primary);
+  box-shadow: 0 0 0 3px var(--color-accent-focus);
 }
 
 .color-option.selected::after {
-  content: '✓';
+  content: '';
   position: absolute;
   top: 50%;
   left: 50%;

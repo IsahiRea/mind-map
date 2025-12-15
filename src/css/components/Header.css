@@ -1,7 +1,7 @@
 /* Header - Mobile First */
 .header {
-  background-color: rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: var(--color-header-bg);
+  border-bottom: 1px solid var(--color-border-light);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -40,7 +40,7 @@
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5rem;
-  color: #0a0a0a;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -49,13 +49,19 @@
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.25rem;
-  color: #45556c;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .header-mode-btn {
-  background-color: #030213;
-  color: white;
+  background-color: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
   border: none;
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
@@ -71,13 +77,17 @@
 }
 
 .header-mode-btn:hover {
-  background-color: #1a1a2e;
+  background-color: var(--color-bg-inverse-hover);
 }
 
 .header-mode-icon {
   width: 1rem;
   height: 1rem;
   filter: brightness(0) invert(1);
+}
+
+[data-theme='dark'] .header-mode-icon {
+  filter: brightness(0);
 }
 
 /* Responsive Design - Tablet and Desktop */

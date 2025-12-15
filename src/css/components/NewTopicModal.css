@@ -1,7 +1,7 @@
 /* NewTopicModal - Mobile First */
 .new-topic-modal {
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-border-light);
   border-radius: 10px;
   padding: 1.5625rem;
   position: relative;
@@ -46,7 +46,7 @@
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.125rem;
-  color: #0a0a0a;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -55,7 +55,7 @@
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.25rem;
-  color: #717182;
+  color: var(--color-text-muted);
   margin: 0;
 }
 
@@ -76,18 +76,18 @@
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 0.875rem;
-  color: #0a0a0a;
+  color: var(--color-text-primary);
 }
 
 .new-topic-form-input,
 .new-topic-form-textarea {
-  background-color: #f3f3f5;
+  background-color: var(--color-bg-tertiary);
   border: 1px solid transparent;
   border-radius: 0.5rem;
   padding: 0.75rem;
   font-family: 'Arimo', sans-serif;
   font-size: 0.875rem;
-  color: #0a0a0a;
+  color: var(--color-text-primary);
   outline: none;
   transition: border-color 0.2s;
 }
@@ -106,12 +106,12 @@
 
 .new-topic-form-input::placeholder,
 .new-topic-form-textarea::placeholder {
-  color: #717182;
+  color: var(--color-text-muted);
 }
 
 .new-topic-form-input:focus,
 .new-topic-form-textarea:focus {
-  border-color: #3b82f6;
+  border-color: var(--color-accent);
 }
 
 .new-topic-color-grid {
@@ -126,7 +126,9 @@
   border-radius: 0.625rem;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   position: relative;
 }
 
@@ -135,7 +137,9 @@
 }
 
 .new-topic-color-button.selected {
-  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #90a1b9;
+  box-shadow:
+    0 0 0 2px var(--color-card-bg),
+    0 0 0 4px var(--color-text-muted);
   transform: scale(1.1);
 }
 
@@ -155,28 +159,30 @@
   padding: 0.5625rem 1.0625rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s;
+  transition:
+    background-color 0.2s,
+    opacity 0.2s;
   border: none;
 }
 
 .new-topic-cancel-btn {
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #0a0a0a;
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
 }
 
 .new-topic-cancel-btn:hover {
-  background-color: #f3f3f5;
+  background-color: var(--color-bg-tertiary);
 }
 
 .new-topic-submit-btn {
-  background-color: #030213;
-  color: white;
+  background-color: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
   border: none;
 }
 
 .new-topic-submit-btn:hover:not(:disabled) {
-  background-color: #1a1a2e;
+  background-color: var(--color-bg-inverse-hover);
 }
 
 .new-topic-submit-btn:disabled {

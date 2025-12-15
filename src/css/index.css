@@ -1,6 +1,9 @@
 /* Import Arimo font from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&display=swap');
 
+/* Import theme variables */
+@import './themes/variables.css';
+
 /* CSS Reset and Base Styles */
 * {
   box-sizing: border-box;
@@ -9,13 +12,16 @@
 }
 
 :root {
-  font-family: 'Arimo', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Arimo',
+    system-ui,
+    -apple-system,
+    sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light;
-  color: #0a0a0a;
-  background-color: #ffffff;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

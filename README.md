@@ -13,6 +13,7 @@ A modern mind-map application for tracking your learning journey. Built with Rea
 - **Keyboard Shortcuts** - Efficient navigation with keyboard commands
 - **Visitor Mode** - Explore the app without authentication
 - **Responsive Design** - Mobile-first approach with responsive layouts
+- **Theme Customization** - Light/dark mode with 8 accent color options
 
 ## Screenshots
 
@@ -35,6 +36,47 @@ _View detailed information about learning nodes and their connections_
 
 ![Auth Modal](screenshots/auth-modal.png)
 _Owner sign-in modal for authenticated access_
+
+## Theming
+
+The application supports customizable themes with light/dark mode and accent colors.
+
+### Theme Toggle
+
+Click the theme button in the header to open the theme settings dropdown. The toggle displays a sun icon in light mode and a moon icon in dark mode.
+
+### Light & Dark Mode
+
+- **Light Mode** - Clean, bright interface with light backgrounds and dark text
+- **Dark Mode** - Easy on the eyes with dark backgrounds and light text
+- **System Preference** - On first visit, the app automatically detects and applies your system's color scheme preference
+
+### Accent Colors
+
+The accent color affects interactive elements throughout the app, including:
+
+- Buttons and links
+- Focus states and highlights
+- Topic badges and indicators
+- Loading spinners
+- Selection states
+
+Choose from 8 accent colors:
+
+| Color   | Hex Code  | Description                |
+| ------- | --------- | -------------------------- |
+| Blue    | `#3b82f6` | Default, professional look |
+| Violet  | `#8b5cf6` | Creative, modern feel      |
+| Pink    | `#ec4899` | Vibrant, energetic         |
+| Amber   | `#f59e0b` | Warm, inviting             |
+| Emerald | `#10b981` | Fresh, natural             |
+| Cyan    | `#06b6d4` | Cool, tech-focused         |
+| Red     | `#ef4444` | Bold, attention-grabbing   |
+| Indigo  | `#6366f1` | Deep, sophisticated        |
+
+### Persistence
+
+Theme preferences are saved to localStorage, so your choices persist across browser sessions. The app remembers both your mode (light/dark) and accent color selection.
 
 ## Tech Stack
 

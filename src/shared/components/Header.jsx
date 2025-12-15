@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useVisitorMode } from '../../features/auth/context/VisitorModeContext'
 import { useAuth } from '../../features/auth/hooks/useAuth'
 import { AuthModal } from '../../features/auth'
+import ThemeToggle from './ThemeToggle'
 import logoIcon from '../../assets/icons/logo.svg'
 import userIcon from '../../assets/icons/user.svg'
 import visitorIcon from '../../assets/icons/visitor.svg'
@@ -33,10 +34,17 @@ export default function Header() {
               <p className="header-subtitle">Track your knowledge journey</p>
             </div>
           </div>
-          <button className="header-mode-btn" onClick={handleAuthAction}>
-            <img src={isVisitorMode ? visitorIcon : userIcon} alt="" className="header-mode-icon" />
-            <span>{isVisitorMode ? 'Owner Sign In' : user?.email || 'Owner Mode'}</span>
-          </button>
+          <div className="header-actions">
+            <ThemeToggle />
+            <button className="header-mode-btn" onClick={handleAuthAction}>
+              <img
+                src={isVisitorMode ? visitorIcon : userIcon}
+                alt=""
+                className="header-mode-icon"
+              />
+              <span>{isVisitorMode ? 'Owner Sign In' : user?.email || 'Owner Mode'}</span>
+            </button>
+          </div>
         </div>
       </header>
 

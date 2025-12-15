@@ -14,16 +14,16 @@
 .filter-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--color-text-tertiary);
   white-space: nowrap;
 }
 
 .filter-select {
   padding: 0.5rem 2rem 0.5rem 0.75rem;
   font-size: 0.875rem;
-  color: #1f2937;
-  background: white;
-  border: 1px solid #e5e7eb;
+  color: var(--color-text-primary);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-border-default);
   border-radius: 6px;
   cursor: pointer;
   appearance: none;
@@ -34,13 +34,13 @@
 }
 
 .filter-select:hover {
-  border-color: #d1d5db;
+  border-color: var(--color-border-input);
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-focus);
 }
 
 /* Mobile-first responsive design */
