@@ -33,6 +33,10 @@
   color: var(--color-text-secondary);
 }
 
+[data-theme='dark'] .theme-toggle-icon {
+  filter: brightness(0) invert(1);
+}
+
 .theme-dropdown {
   position: absolute;
   top: calc(100% + 0.5rem);

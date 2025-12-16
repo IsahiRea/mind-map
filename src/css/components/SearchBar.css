@@ -24,6 +24,10 @@
   flex-shrink: 0;
 }
 
+[data-theme='dark'] .search-icon {
+  filter: brightness(0) invert(1);
+}
+
 .search-input {
   flex: 1;
   border: none;

@@ -49,6 +49,10 @@
   height: 1rem;
 }
 
+[data-theme='dark'] .back-icon {
+  filter: brightness(0) invert(1);
+}
+
 .header-divider {
   width: 1px;
   height: 2rem;
@@ -135,6 +139,10 @@
 .zoom-icon {
   width: 1rem;
   height: 1rem;
+}
+
+[data-theme='dark'] .zoom-icon {
+  filter: brightness(0) invert(1);
 }
 
 .zoom-display {
