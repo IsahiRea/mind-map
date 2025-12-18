@@ -26,8 +26,8 @@
   background: linear-gradient(
     to bottom,
     var(--color-hero-gradient-start) 0%,
-    var(--color-hero-gradient-end) 280px,
-    var(--color-bg-secondary) 280px
+    var(--color-hero-gradient-end) 180px,
+    var(--color-bg-secondary) 340px
   );
   position: relative;
 }
@@ -265,8 +265,8 @@
     background: linear-gradient(
       to bottom,
       var(--color-hero-gradient-start) 0%,
-      var(--color-hero-gradient-end) 320px,
-      var(--color-bg-secondary) 320px
+      var(--color-hero-gradient-end) 200px,
+      var(--color-bg-secondary) 380px
     );
   }
 
