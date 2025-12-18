@@ -74,7 +74,7 @@
 .add-node-title-input {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  font-family: 'Arimo', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.875rem;
   color: var(--color-text-primary);
   background-color: var(--color-bg-tertiary);
@@ -147,7 +147,7 @@
 .add-node-textarea {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  font-family: 'Arimo', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.875rem;
   line-height: 1.43;
   color: var(--color-text-primary);
@@ -238,7 +238,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  font-family: 'Arimo', sans-serif;
+  font-family: var(--font-body);
   font-size: 0.875rem;
   border-radius: 0.5rem;
   cursor: pointer;
