@@ -160,22 +160,45 @@ export default function HomePage() {
     <div className="home-page">
       <Header />
 
+      <section className="hero-section">
+        <div className="hero-content">
+          <h2 className="hero-headline">Your Learning Topics</h2>
+          <p className="hero-subheadline">
+            {topics.length} {topics.length === 1 ? 'topic' : 'topics'} in your collection
+          </p>
+        </div>
+        <div className="hero-decoration" aria-hidden="true">
+          <svg
+            className="hero-nodes"
+            viewBox="0 0 200 120"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="40" cy="60" r="8" fill="currentColor" opacity="0.15" />
+            <circle cx="100" cy="30" r="6" fill="currentColor" opacity="0.2" />
+            <circle cx="160" cy="70" r="10" fill="currentColor" opacity="0.1" />
+            <circle cx="130" cy="100" r="5" fill="currentColor" opacity="0.15" />
+            <circle cx="70" cy="90" r="7" fill="currentColor" opacity="0.12" />
+            <path
+              d="M40 60 L100 30 M100 30 L160 70 M160 70 L130 100 M130 100 L70 90 M70 90 L40 60"
+              stroke="currentColor"
+              strokeWidth="1"
+              opacity="0.1"
+            />
+          </svg>
+        </div>
+      </section>
+
       <main className="main-content">
         <div className="content-header">
-          <div className="content-title-section">
-            <h2 className="content-title">Your Learning Topics</h2>
-            <p className="content-subtitle">
-              {filteredAndSortedTopics.length}{' '}
-              {filteredAndSortedTopics.length === 1 ? 'topic' : 'topics'}
-              {searchQuery && ` matching "${searchQuery}"`}
-            </p>
+          <div className="content-actions">
+            {!isVisitorMode && (
+              <button className="new-topic-btn" onClick={() => setIsModalOpen(true)}>
+                <img src={plusIcon} alt="" className="new-topic-icon" />
+                <span>New Topic</span>
+              </button>
+            )}
           </div>
-          {!isVisitorMode && (
-            <button className="new-topic-btn" onClick={() => setIsModalOpen(true)}>
-              <img src={plusIcon} alt="" className="new-topic-icon" />
-              <span>New Topic</span>
-            </button>
-          )}
         </div>
 
         <div className="search-filter-container">
@@ -183,17 +206,58 @@ export default function HomePage() {
           <FilterControls sortBy={sortBy} onSortChange={setSortBy} />
         </div>
 
+        {searchQuery && (
+          <p className="search-results-info">
+            {filteredAndSortedTopics.length}{' '}
+            {filteredAndSortedTopics.length === 1 ? 'result' : 'results'} for "{searchQuery}"
+          </p>
+        )}
+
         {filteredAndSortedTopics.length === 0 ? (
           <div className="empty-state">
+            <div className="empty-state-icon" aria-hidden="true">
+              <svg
+                width="64"
+                height="64"
+                viewBox="0 0 64 64"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="28"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  opacity="0.2"
+                />
+                <circle cx="32" cy="32" r="8" fill="currentColor" opacity="0.15" />
+                <path
+                  d="M32 4v12M32 48v12M4 32h12M48 32h12"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  opacity="0.15"
+                />
+              </svg>
+            </div>
+            <h3 className="empty-state-title">
+              {searchQuery ? 'No matches found' : 'Start Your Journey'}
+            </h3>
             <p className="empty-state-message">
               {searchQuery
                 ? 'No topics match your search. Try a different search term.'
-                : 'No topics yet. Create your first topic to get started!'}
+                : 'Create your first topic to begin mapping your learning path.'}
             </p>
+            {!searchQuery && !isVisitorMode && (
+              <button className="empty-state-cta" onClick={() => setIsModalOpen(true)}>
+                <img src={plusIcon} alt="" className="empty-state-cta-icon" />
+                <span>Create First Topic</span>
+              </button>
+            )}
           </div>
         ) : (
           <div className="topics-grid">
-            {filteredAndSortedTopics.map(topic => (
+            {filteredAndSortedTopics.map((topic, index) => (
               <TopicCard
                 key={topic.id}
                 id={topic.id}
@@ -204,6 +268,7 @@ export default function HomePage() {
                 nodeCount={topic.nodeCount}
                 isVisitorMode={isVisitorMode}
                 onDelete={handleDeleteClick}
+                style={{ '--card-index': index }}
               />
             ))}
           </div>

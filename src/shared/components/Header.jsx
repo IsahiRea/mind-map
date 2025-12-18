@@ -28,10 +28,15 @@ export default function Header() {
       <header className="header">
         <div className="header-container">
           <div className="header-brand">
-            <img src={logoIcon} alt="Learning Map" className="header-logo" />
+            <div className="header-logo-container">
+              <img src={logoIcon} alt="Learning Map" className="header-logo" />
+              <div className="header-logo-glow" aria-hidden="true"></div>
+            </div>
             <div className="header-text">
-              <h1 className="header-title">Learning Map</h1>
-              <p className="header-subtitle">Track your knowledge journey</p>
+              <h1 className="header-title">
+                Learning<span className="header-title-accent">Map</span>
+              </h1>
+              <p className="header-subtitle">Chart your knowledge journey</p>
             </div>
           </div>
           <div className="header-actions">

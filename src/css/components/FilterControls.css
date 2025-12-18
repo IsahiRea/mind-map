@@ -1,3 +1,4 @@
+/* FilterControls - Mobile First */
 .filter-controls {
   display: flex;
   gap: 1rem;
@@ -12,29 +13,36 @@
 }
 
 .filter-label {
-  font-size: 0.875rem;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--color-text-tertiary);
   white-space: nowrap;
 }
 
 .filter-select {
-  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  padding: 0.5rem 2.25rem 0.5rem 0.875rem;
+  font-family: var(--font-body);
   font-size: 0.875rem;
+  font-weight: 500;
   color: var(--color-text-primary);
-  background: var(--color-card-bg);
+  background: var(--color-surface-raised);
   border: 1px solid var(--color-border-default);
-  border-radius: 6px;
+  border-radius: 0.625rem;
   cursor: pointer;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
-  transition: all 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .filter-select:hover {
   border-color: var(--color-border-input);
+  background-color: var(--color-bg-warm);
 }
 
 .filter-select:focus {
@@ -47,5 +55,12 @@
 @media (min-width: 768px) {
   .filter-controls {
     gap: 1.5rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .filter-select {
+    transition: none;
   }
 }
