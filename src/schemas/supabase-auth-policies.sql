@@ -1,67 +1,149 @@
--- Update RLS Policies for Authenticated Users
--- Run this SQL in your Supabase SQL Editor to update authentication policies
+-- Secure RLS Policies for User-Owned Data
+-- These policies ensure users can only access and modify their own data
+-- Applied via Supabase migrations on 2026-01-07
 
--- First, drop the existing public write policies
+-- ============================================
+-- TOPICS TABLE
+-- ============================================
+
+-- Drop old permissive policies
 DROP POLICY IF EXISTS "Allow all insert on topics" ON topics;
 DROP POLICY IF EXISTS "Allow all update on topics" ON topics;
 DROP POLICY IF EXISTS "Allow all delete on topics" ON topics;
+DROP POLICY IF EXISTS "Authenticated users can insert topics" ON topics;
+DROP POLICY IF EXISTS "Authenticated users can update topics" ON topics;
+DROP POLICY IF EXISTS "Authenticated users can delete topics" ON topics;
 
+-- Secure policies: users can only modify their own topics
+CREATE POLICY "Users can insert their own topics" ON topics
+  FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own topics" ON topics
+  FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own topics" ON topics
+  FOR DELETE TO authenticated
+  USING (auth.uid() = user_id);
+
+-- ============================================
+-- LEARNING_NODES TABLE
+-- ============================================
+
+-- Drop old permissive policies
 DROP POLICY IF EXISTS "Allow all insert on learning_nodes" ON learning_nodes;
 DROP POLICY IF EXISTS "Allow all update on learning_nodes" ON learning_nodes;
 DROP POLICY IF EXISTS "Allow all delete on learning_nodes" ON learning_nodes;
+DROP POLICY IF EXISTS "Authenticated users can insert learning_nodes" ON learning_nodes;
+DROP POLICY IF EXISTS "Authenticated users can update learning_nodes" ON learning_nodes;
+DROP POLICY IF EXISTS "Authenticated users can delete learning_nodes" ON learning_nodes;
 
+-- Secure policies: users can only modify nodes in topics they own
+CREATE POLICY "Users can insert nodes in their own topics" ON learning_nodes
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM topics
+      WHERE topics.id = topic_id
+      AND topics.user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Users can update nodes in their own topics" ON learning_nodes
+  FOR UPDATE TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM topics
+      WHERE topics.id = topic_id
+      AND topics.user_id = auth.uid()
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM topics
+      WHERE topics.id = topic_id
+      AND topics.user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Users can delete nodes in their own topics" ON learning_nodes
+  FOR DELETE TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM topics
+      WHERE topics.id = topic_id
+      AND topics.user_id = auth.uid()
+    )
+  );
+
+-- ============================================
+-- NODE_CONNECTIONS TABLE
+-- ============================================
+
+-- Drop old permissive policies
 DROP POLICY IF EXISTS "Allow all insert on node_connections" ON node_connections;
 DROP POLICY IF EXISTS "Allow all update on node_connections" ON node_connections;
 DROP POLICY IF EXISTS "Allow all delete on node_connections" ON node_connections;
+DROP POLICY IF EXISTS "Authenticated users can insert node_connections" ON node_connections;
+DROP POLICY IF EXISTS "Authenticated users can update node_connections" ON node_connections;
+DROP POLICY IF EXISTS "Authenticated users can delete node_connections" ON node_connections;
 
--- Create new authenticated-only write policies
--- Topics: Only authenticated users can create, update, delete
-CREATE POLICY "Authenticated users can insert topics" ON topics
+-- Secure policies: users can only modify connections in topics they own
+CREATE POLICY "Users can insert connections in their own topics" ON node_connections
   FOR INSERT TO authenticated
-  WITH CHECK (true);
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM learning_nodes ln
+      JOIN topics t ON t.id = ln.topic_id
+      WHERE ln.id = from_node_id
+      AND t.user_id = auth.uid()
+    )
+  );
 
-CREATE POLICY "Authenticated users can update topics" ON topics
+CREATE POLICY "Users can update connections in their own topics" ON node_connections
   FOR UPDATE TO authenticated
-  USING (true);
+  USING (
+    EXISTS (
+      SELECT 1 FROM learning_nodes ln
+      JOIN topics t ON t.id = ln.topic_id
+      WHERE ln.id = from_node_id
+      AND t.user_id = auth.uid()
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM learning_nodes ln
+      JOIN topics t ON t.id = ln.topic_id
+      WHERE ln.id = from_node_id
+      AND t.user_id = auth.uid()
+    )
+  );
 
-CREATE POLICY "Authenticated users can delete topics" ON topics
+CREATE POLICY "Users can delete connections in their own topics" ON node_connections
   FOR DELETE TO authenticated
-  USING (true);
+  USING (
+    EXISTS (
+      SELECT 1 FROM learning_nodes ln
+      JOIN topics t ON t.id = ln.topic_id
+      WHERE ln.id = from_node_id
+      AND t.user_id = auth.uid()
+    )
+  );
 
--- Learning Nodes: Only authenticated users can create, update, delete
-CREATE POLICY "Authenticated users can insert learning_nodes" ON learning_nodes
-  FOR INSERT TO authenticated
-  WITH CHECK (true);
-
-CREATE POLICY "Authenticated users can update learning_nodes" ON learning_nodes
-  FOR UPDATE TO authenticated
-  USING (true);
-
-CREATE POLICY "Authenticated users can delete learning_nodes" ON learning_nodes
-  FOR DELETE TO authenticated
-  USING (true);
-
--- Node Connections: Only authenticated users can create, update, delete
-CREATE POLICY "Authenticated users can insert node_connections" ON node_connections
-  FOR INSERT TO authenticated
-  WITH CHECK (true);
-
-CREATE POLICY "Authenticated users can update node_connections" ON node_connections
-  FOR UPDATE TO authenticated
-  USING (true);
-
-CREATE POLICY "Authenticated users can delete node_connections" ON node_connections
-  FOR DELETE TO authenticated
-  USING (true);
-
--- Public read access policies remain unchanged
--- These were created in the initial schema:
+-- ============================================
+-- PUBLIC READ ACCESS (unchanged)
+-- ============================================
+-- These policies allow public read access for visitor mode:
 -- - "Allow public read access on topics"
 -- - "Allow public read access on learning_nodes"
 -- - "Allow public read access on node_connections"
 
--- Verify policies
-SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual, with_check
+-- ============================================
+-- VERIFY POLICIES
+-- ============================================
+SELECT schemaname, tablename, policyname, permissive, roles, cmd
 FROM pg_policies
 WHERE tablename IN ('topics', 'learning_nodes', 'node_connections')
 ORDER BY tablename, policyname;

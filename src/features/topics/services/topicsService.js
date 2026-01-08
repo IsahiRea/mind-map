@@ -37,6 +37,12 @@ export const topicsService = {
    * @returns {Promise<Object>} Created topic
    */
   async create(topic) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) throw new Error('Must be authenticated to create topics')
+
     const { data, error } = await supabase
       .from('topics')
       .insert([
@@ -45,6 +51,7 @@ export const topicsService = {
           description: topic.description,
           icon_bg_color: topic.iconBgColor,
           icon_color: topic.iconColor,
+          user_id: user.id,
         },
       ])
       .select()
