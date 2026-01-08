@@ -1,6 +1,7 @@
 -- Secure RLS Policies for User-Owned Data
 -- These policies ensure users can only access and modify their own data
 -- Applied via Supabase migrations on 2026-01-07
+-- Optimized: auth.uid() wrapped in subquery for performance
 
 -- ============================================
 -- TOPICS TABLE
@@ -15,18 +16,19 @@ DROP POLICY IF EXISTS "Authenticated users can update topics" ON topics;
 DROP POLICY IF EXISTS "Authenticated users can delete topics" ON topics;
 
 -- Secure policies: users can only modify their own topics
+-- Note: (select auth.uid()) is used instead of auth.uid() for performance
 CREATE POLICY "Users can insert their own topics" ON topics
   FOR INSERT TO authenticated
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own topics" ON topics
   FOR UPDATE TO authenticated
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id)
+  WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete their own topics" ON topics
   FOR DELETE TO authenticated
-  USING (auth.uid() = user_id);
+  USING ((select auth.uid()) = user_id);
 
 -- ============================================
 -- LEARNING_NODES TABLE
@@ -47,7 +49,7 @@ CREATE POLICY "Users can insert nodes in their own topics" ON learning_nodes
     EXISTS (
       SELECT 1 FROM topics
       WHERE topics.id = topic_id
-      AND topics.user_id = auth.uid()
+      AND topics.user_id = (select auth.uid())
     )
   );
 
@@ -57,14 +59,14 @@ CREATE POLICY "Users can update nodes in their own topics" ON learning_nodes
     EXISTS (
       SELECT 1 FROM topics
       WHERE topics.id = topic_id
-      AND topics.user_id = auth.uid()
+      AND topics.user_id = (select auth.uid())
     )
   )
   WITH CHECK (
     EXISTS (
       SELECT 1 FROM topics
       WHERE topics.id = topic_id
-      AND topics.user_id = auth.uid()
+      AND topics.user_id = (select auth.uid())
     )
   );
 
@@ -74,7 +76,7 @@ CREATE POLICY "Users can delete nodes in their own topics" ON learning_nodes
     EXISTS (
       SELECT 1 FROM topics
       WHERE topics.id = topic_id
-      AND topics.user_id = auth.uid()
+      AND topics.user_id = (select auth.uid())
     )
   );
 
@@ -98,7 +100,7 @@ CREATE POLICY "Users can insert connections in their own topics" ON node_connect
       SELECT 1 FROM learning_nodes ln
       JOIN topics t ON t.id = ln.topic_id
       WHERE ln.id = from_node_id
-      AND t.user_id = auth.uid()
+      AND t.user_id = (select auth.uid())
     )
   );
 
@@ -109,7 +111,7 @@ CREATE POLICY "Users can update connections in their own topics" ON node_connect
       SELECT 1 FROM learning_nodes ln
       JOIN topics t ON t.id = ln.topic_id
       WHERE ln.id = from_node_id
-      AND t.user_id = auth.uid()
+      AND t.user_id = (select auth.uid())
     )
   )
   WITH CHECK (
@@ -117,7 +119,7 @@ CREATE POLICY "Users can update connections in their own topics" ON node_connect
       SELECT 1 FROM learning_nodes ln
       JOIN topics t ON t.id = ln.topic_id
       WHERE ln.id = from_node_id
-      AND t.user_id = auth.uid()
+      AND t.user_id = (select auth.uid())
     )
   );
 
@@ -128,7 +130,7 @@ CREATE POLICY "Users can delete connections in their own topics" ON node_connect
       SELECT 1 FROM learning_nodes ln
       JOIN topics t ON t.id = ln.topic_id
       WHERE ln.id = from_node_id
-      AND t.user_id = auth.uid()
+      AND t.user_id = (select auth.uid())
     )
   );
 
