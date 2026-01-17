@@ -12,6 +12,8 @@ function transformTopic(topic) {
     iconBgColor: topic.icon_bg_color,
     iconColor: topic.icon_color,
     nodeCount: topic.node_count || 0,
+    isPublic: topic.is_public ?? false,
+    userId: topic.user_id,
   }
 }
 
@@ -42,7 +44,11 @@ export function useTopics() {
     onSuccess: newTopic => {
       // Optimistically update cache
       queryClient.setQueryData(['topics'], old => {
-        const transformedTopic = transformTopic({ ...newTopic, node_count: 0 })
+        const transformedTopic = transformTopic({
+          ...newTopic,
+          node_count: 0,
+          is_public: newTopic.is_public ?? false,
+        })
         return [transformedTopic, ...(old || [])]
       })
     },

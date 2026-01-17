@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Modal } from '../../../shared'
+import { Modal, Checkbox } from '../../../shared'
 import xIcon from '../../../assets/icons/x.svg'
 import '../../../css/components/NewTopicModal.css'
 
@@ -18,6 +18,7 @@ export default function NewTopicModal({ isOpen, onClose, onSubmit }) {
   const [topicName, setTopicName] = useState('')
   const [description, setDescription] = useState('')
   const [selectedColor, setSelectedColor] = useState(COLOR_THEMES[0])
+  const [isPublic, setIsPublic] = useState(false)
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -27,12 +28,14 @@ export default function NewTopicModal({ isOpen, onClose, onSubmit }) {
         description: description.trim(),
         iconBgColor: selectedColor.bgColor,
         iconColor: selectedColor.color,
+        isPublic,
         nodeCount: 0,
       })
       // Reset form
       setTopicName('')
       setDescription('')
       setSelectedColor(COLOR_THEMES[0])
+      setIsPublic(false)
       onClose()
     }
   }
@@ -41,6 +44,7 @@ export default function NewTopicModal({ isOpen, onClose, onSubmit }) {
     setTopicName('')
     setDescription('')
     setSelectedColor(COLOR_THEMES[0])
+    setIsPublic(false)
     onClose()
   }
 
@@ -104,6 +108,18 @@ export default function NewTopicModal({ isOpen, onClose, onSubmit }) {
                 />
               ))}
             </div>
+          </div>
+
+          <div className="new-topic-form-field new-topic-visibility-field">
+            <Checkbox
+              id="is-public"
+              label="Make this topic public"
+              checked={isPublic}
+              onChange={e => setIsPublic(e.target.checked)}
+            />
+            <p className="new-topic-visibility-hint">
+              Public topics can be viewed by anyone, even without signing in
+            </p>
           </div>
 
           <div className="new-topic-modal-footer">
