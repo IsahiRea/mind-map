@@ -97,6 +97,42 @@ export function useAuth() {
     }
   }
 
+  /**
+   * Sign in with Google OAuth
+   */
+  async function signInWithGoogle() {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await authService.signInWithOAuth('google')
+      return data
+    } catch (err) {
+      console.error('Error signing in with Google:', err)
+      setError(err.message)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /**
+   * Sign in with GitHub OAuth
+   */
+  async function signInWithGitHub() {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await authService.signInWithOAuth('github')
+      return data
+    } catch (err) {
+      console.error('Error signing in with GitHub:', err)
+      setError(err.message)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return {
     user,
     session,
@@ -105,6 +141,8 @@ export function useAuth() {
     signUp,
     signIn,
     signOut,
+    signInWithGoogle,
+    signInWithGitHub,
     isAuthenticated: !!user,
   }
 }

@@ -75,4 +75,21 @@ export const authService = {
 
     return subscription
   },
+
+  /**
+   * Sign in with OAuth provider (Google or GitHub)
+   * @param {'google' | 'github'} provider - OAuth provider name
+   * @returns {Promise<Object>} OAuth response data
+   */
+  async signInWithOAuth(provider) {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: window.location.origin,
+      },
+    })
+
+    if (error) throw error
+    return data
+  },
 }
