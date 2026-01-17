@@ -4,8 +4,8 @@
 
 Transform the mind-map application from a single-owner model to a multi-user platform where anyone can create an account and manage their own topics and mind maps.
 
-**Status**: Planning
-**Last Updated**: 2026-01-15
+**Status**: Implementation Complete (Pending Database Migration & OAuth Setup)
+**Last Updated**: 2026-01-16
 
 ---
 
@@ -166,11 +166,11 @@ CREATE TABLE user_profiles (
 
 ### Phase 1: Database Foundation
 
-- [ ] Run migration to add `user_id` and `is_public` to topics
-- [ ] Create `user_profiles` table
-- [ ] Update RLS policies for visibility
-- [ ] Add database indexes for performance
-- [ ] Create admin user and migrate existing data
+- [x] Run migration to add `user_id` and `is_public` to topics
+- [x] Create `user_profiles` table
+- [x] Update RLS policies for visibility
+- [x] Add database indexes for performance
+- [ ] Create admin user and migrate existing data _(pending - run after OAuth setup)_
 
 ### Phase 2: Supabase OAuth Setup
 
@@ -181,33 +181,33 @@ CREATE TABLE user_profiles (
 
 ### Phase 3: Auth Service Updates
 
-- [ ] Add `signInWithOAuth(provider)` method to authService
-- [ ] Add `signInWithGoogle()` wrapper to useAuth hook
-- [ ] Add `signInWithGitHub()` wrapper to useAuth hook
-- [ ] Handle OAuth redirect/callback
+- [x] Add `signInWithOAuth(provider)` method to authService
+- [x] Add `signInWithGoogle()` wrapper to useAuth hook
+- [x] Add `signInWithGitHub()` wrapper to useAuth hook
+- [x] Handle OAuth redirect/callback
 
 ### Phase 4: User Profile Feature
 
-- [ ] Create `src/features/users/` directory
-- [ ] Implement userService.js for profile CRUD
-- [ ] Implement useUserProfile hook with auto-creation
-- [ ] Create UserProfileModal component
-- [ ] Add profile sync on first OAuth login
+- [x] Create `src/features/users/` directory
+- [x] Implement userService.js for profile CRUD
+- [x] Implement useUserProfile hook with auto-creation
+- [x] Create UserProfileModal component
+- [x] Add profile sync on first OAuth login
 
 ### Phase 5: Auth UI Updates
 
-- [ ] Add OAuth buttons to AuthModal
-- [ ] Add OAuth button styles (Google blue, GitHub dark)
-- [ ] Add Google and GitHub SVG icons
-- [ ] Update Header with user dropdown and avatar
+- [x] Add OAuth buttons to AuthModal
+- [x] Add OAuth button styles (Google blue, GitHub dark)
+- [x] Add Google and GitHub SVG icons
+- [x] Update Header with user dropdown and avatar
 
 ### Phase 6: Visibility Feature
 
-- [ ] Create VisibilityToggle component
-- [ ] Add useTopicVisibility hook
-- [ ] Integrate toggle into TopicCard
-- [ ] Add checkbox to NewTopicModal
-- [ ] Update topicsService to handle is_public
+- [x] Create VisibilityToggle component
+- [x] Add useTopicVisibility hook
+- [x] Integrate toggle into TopicCard
+- [x] Add checkbox to NewTopicModal
+- [x] Update topicsService to handle is_public
 
 ### Phase 7: Testing & Polish
 

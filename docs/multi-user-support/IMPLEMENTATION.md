@@ -688,30 +688,30 @@ isPublic: topic.is_public || false,
 
 ### New Files to Create
 
-- [ ] `src/schemas/multi-user-migration.sql`
-- [ ] `src/features/users/services/userService.js`
-- [ ] `src/features/users/hooks/useUserProfile.js`
-- [ ] `src/features/users/hooks/useTopicVisibility.js`
-- [ ] `src/features/users/components/UserProfileModal.jsx`
-- [ ] `src/features/users/components/VisibilityToggle.jsx`
-- [ ] `src/features/users/index.js`
-- [ ] `src/css/components/UserProfileModal.css`
-- [ ] `src/css/components/VisibilityToggle.css`
-- [ ] `src/assets/icons/google.svg`
-- [ ] `src/assets/icons/github.svg`
+- [x] `src/schemas/multi-user-migration.sql`
+- [x] `src/features/users/services/userService.js`
+- [x] `src/features/users/hooks/useUserProfile.js`
+- [x] `src/features/users/hooks/useTopicVisibility.js`
+- [x] `src/features/users/components/UserProfileModal.jsx`
+- [x] `src/features/users/components/VisibilityToggle.jsx`
+- [x] `src/features/users/index.js`
+- [x] `src/css/components/UserProfileModal.css`
+- [x] `src/css/components/VisibilityToggle.css`
+- [x] `src/assets/icons/google.svg`
+- [x] `src/assets/icons/github.svg`
 
 ### Files to Modify
 
-- [ ] `src/features/auth/services/authService.js`
-- [ ] `src/features/auth/hooks/useAuth.js`
-- [ ] `src/features/auth/components/AuthModal.jsx`
-- [ ] `src/css/components/AuthModal.css`
-- [ ] `src/shared/components/Header.jsx`
-- [ ] `src/css/components/Header.css`
-- [ ] `src/features/topics/services/topicsService.js`
-- [ ] `src/features/topics/hooks/useTopics.js`
-- [ ] `src/features/topics/components/TopicCard.jsx`
-- [ ] `src/features/topics/components/NewTopicModal.jsx`
+- [x] `src/features/auth/services/authService.js`
+- [x] `src/features/auth/hooks/useAuth.js`
+- [x] `src/features/auth/components/AuthModal.jsx`
+- [x] `src/css/components/AuthModal.css`
+- [x] `src/shared/components/Header.jsx`
+- [x] `src/css/components/Header.css`
+- [x] `src/features/topics/services/topicsService.js`
+- [x] `src/features/topics/hooks/useTopics.js`
+- [x] `src/features/topics/components/TopicCard.jsx`
+- [x] `src/features/topics/components/NewTopicModal.jsx`
 
 ---
 
