@@ -72,23 +72,28 @@ export const userService = {
    * @returns {Promise<Object>} User profile (existing or newly created)
    */
   async syncFromAuth(authUser) {
-    // Check if profile exists
-    const existing = await this.getProfile(authUser.id)
-    if (existing) return existing
-
-    // Extract profile data from auth user metadata
     const metadata = authUser.user_metadata || {}
     const provider = authUser.app_metadata?.provider || 'email'
+    const avatarUrl = metadata.avatar_url || metadata.picture || null
 
-    // Determine display name and avatar from metadata
+    // Check if profile exists
+    const existing = await this.getProfile(authUser.id)
+
+    if (existing) {
+      // Update avatar if OAuth has one and it differs from stored value
+      if (avatarUrl && existing.avatar_url !== avatarUrl) {
+        return this.updateProfile(authUser.id, { avatarUrl })
+      }
+      return existing
+    }
+
+    // Extract display name for new profiles
     const displayName =
       metadata.full_name ||
       metadata.name ||
       metadata.preferred_username ||
       authUser.email?.split('@')[0] ||
       'User'
-
-    const avatarUrl = metadata.avatar_url || metadata.picture || null
 
     // Create new profile
     return this.createProfile({
