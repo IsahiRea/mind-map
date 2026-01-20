@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useVisitorMode } from '../../auth/context/VisitorModeContext'
+import { useAuth } from '../../auth/hooks/useAuth'
 import { useTopics } from '../hooks/useTopics'
 import { useKeyboardShortcuts } from '../../../shared/hooks/useKeyboardShortcuts'
 import { Header, SearchBar, FilterControls, Skeleton } from '../../../shared'
@@ -13,6 +14,7 @@ const { TopicCardSkeleton } = Skeleton
 
 export default function HomePage() {
   const { isVisitorMode } = useVisitorMode()
+  const { user } = useAuth()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [topicToDelete, setTopicToDelete] = useState(null)
@@ -266,6 +268,8 @@ export default function HomePage() {
                 title={topic.title}
                 description={topic.description}
                 nodeCount={topic.nodeCount}
+                isPublic={topic.isPublic}
+                isOwner={user?.id === topic.userId}
                 isVisitorMode={isVisitorMode}
                 onDelete={handleDeleteClick}
                 style={{ '--card-index': index }}

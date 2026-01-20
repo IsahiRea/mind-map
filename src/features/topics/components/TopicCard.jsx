@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { Link } from 'react-router-dom'
+import { VisibilityToggle } from '../../users'
 import '../../../css/components/TopicCard.css'
 
 function TopicCard({
@@ -9,6 +10,8 @@ function TopicCard({
   nodeCount,
   iconBgColor,
   iconColor,
+  isPublic = false,
+  isOwner = false,
   isVisitorMode = false,
   onDelete,
   style,
@@ -53,9 +56,12 @@ function TopicCard({
               />
             </svg>
           </div>
-          <div className="topic-badge">
-            <span className="topic-badge-number">{nodeCount}</span>
-            <span className="topic-badge-label">nodes</span>
+          <div className="topic-card-header-right">
+            {isOwner && <VisibilityToggle topicId={id} isPublic={isPublic} />}
+            <div className="topic-badge">
+              <span className="topic-badge-number">{nodeCount}</span>
+              <span className="topic-badge-label">nodes</span>
+            </div>
           </div>
         </header>
 

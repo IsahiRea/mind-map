@@ -139,6 +139,13 @@
   filter: brightness(0);
 }
 
+.header-user-avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 /* Responsive Design - Tablet and Desktop */
 @media (min-width: 768px) {
   .header-container {

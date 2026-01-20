@@ -1,0 +1,221 @@
+/* User Profile Modal - Mobile First */
+.profile-modal {
+  background: var(--color-card-bg);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 480px;
+  width: 90vw;
+  position: relative;
+}
+
+.profile-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.profile-modal-close:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.profile-modal-close img {
+  width: 20px;
+  height: 20px;
+}
+
+.profile-modal-header {
+  margin-bottom: 24px;
+  padding-right: 2.5rem;
+}
+
+.profile-modal-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.profile-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Avatar Section */
+.profile-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-border-default);
+}
+
+.profile-avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.profile-avatar-hint {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+/* Form */
+.profile-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-modal-error {
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  color: var(--color-error);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.profile-modal-success {
+  background-color: var(--color-success-bg);
+  border: 1px solid var(--color-success-border);
+  color: var(--color-success);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.profile-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.profile-form-input {
+  padding: 12px 16px;
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: var(--color-card-bg);
+  color: var(--color-text-primary);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.profile-form-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-focus);
+}
+
+.profile-form-input:disabled {
+  background-color: var(--color-bg-tertiary);
+  cursor: not-allowed;
+}
+
+.profile-form-value {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  padding: 8px 0;
+}
+
+/* Actions */
+.profile-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.profile-save-btn {
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-family: inherit;
+}
+
+.profile-save-btn:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+}
+
+.profile-save-btn:disabled {
+  background-color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.profile-signout-btn {
+  background: none;
+  border: 1px solid var(--color-border-default);
+  color: var(--color-text-secondary);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+  font-family: inherit;
+}
+
+.profile-signout-btn:hover {
+  background-color: var(--color-error-bg);
+  border-color: var(--color-error-border);
+  color: var(--color-error);
+}
+
+/* Responsive - Tablet and Desktop */
+@media (min-width: 640px) {
+  .profile-modal-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .profile-save-btn,
+  .profile-signout-btn {
+    width: auto;
+  }
+}

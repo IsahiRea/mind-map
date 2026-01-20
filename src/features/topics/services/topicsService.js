@@ -34,6 +34,7 @@ export const topicsService = {
    * @param {string} topic.description - Topic description
    * @param {string} topic.iconBgColor - Background color for icon
    * @param {string} topic.iconColor - Icon color
+   * @param {boolean} topic.isPublic - Whether the topic is public
    * @returns {Promise<Object>} Created topic
    */
   async create(topic) {
@@ -52,6 +53,7 @@ export const topicsService = {
           icon_bg_color: topic.iconBgColor,
           icon_color: topic.iconColor,
           user_id: user.id,
+          is_public: topic.isPublic ?? false,
         },
       ])
       .select()
@@ -73,6 +75,7 @@ export const topicsService = {
     if (updates.description !== undefined) updateData.description = updates.description
     if (updates.iconBgColor !== undefined) updateData.icon_bg_color = updates.iconBgColor
     if (updates.iconColor !== undefined) updateData.icon_color = updates.iconColor
+    if (updates.isPublic !== undefined) updateData.is_public = updates.isPublic
 
     const { data, error } = await supabase
       .from('topics')

@@ -190,6 +190,20 @@
   cursor: not-allowed;
 }
 
+/* Visibility field */
+.new-topic-visibility-field {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border-default);
+}
+
+.new-topic-visibility-hint {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  margin: 0;
+  padding-left: 1.5rem;
+  line-height: 1.4;
+}
+
 /* Responsive Design - Tablet and Desktop */
 @media (min-width: 768px) {
   .new-topic-modal {

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useVisitorMode } from '../../features/auth/context/VisitorModeContext'
 import { useAuth } from '../../features/auth/hooks/useAuth'
 import { AuthModal } from '../../features/auth'
+import { UserProfileModal, useUserProfile } from '../../features/users'
 import ThemeToggle from './ThemeToggle'
 import logoIcon from '../../assets/icons/logo.svg'
 import userIcon from '../../assets/icons/user.svg'
@@ -10,18 +11,22 @@ import '../../css/components/Header.css'
 
 export default function Header() {
   const { isVisitorMode } = useVisitorMode()
-  const { user, signOut } = useAuth()
+  const { user } = useAuth()
+  const { profile } = useUserProfile()
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
 
   const handleAuthAction = () => {
     if (user) {
-      // Sign out
-      signOut()
+      // Show profile modal
+      setIsProfileModalOpen(true)
     } else {
       // Show auth modal
       setIsAuthModalOpen(true)
     }
   }
+
+  const displayName = profile?.displayName || user?.email?.split('@')[0] || 'User'
 
   return (
     <>
@@ -42,18 +47,23 @@ export default function Header() {
           <div className="header-actions">
             <ThemeToggle />
             <button className="header-mode-btn" onClick={handleAuthAction}>
-              <img
-                src={isVisitorMode ? visitorIcon : userIcon}
-                alt=""
-                className="header-mode-icon"
-              />
-              <span>{isVisitorMode ? 'Owner Sign In' : user?.email || 'Owner Mode'}</span>
+              {user && profile?.avatarUrl ? (
+                <img src={profile.avatarUrl} alt="" className="header-user-avatar" />
+              ) : (
+                <img
+                  src={isVisitorMode ? visitorIcon : userIcon}
+                  alt=""
+                  className="header-mode-icon"
+                />
+              )}
+              <span>{isVisitorMode ? 'Sign In' : displayName}</span>
             </button>
           </div>
         </div>
       </header>
 
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <UserProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
     </>
   )
 }

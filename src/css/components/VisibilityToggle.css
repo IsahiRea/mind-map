@@ -1,0 +1,66 @@
+/* Visibility Toggle - Mobile First */
+.visibility-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+  font-family: inherit;
+  border: 1px solid transparent;
+}
+
+.visibility-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.visibility-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.visibility-toggle-label {
+  line-height: 1;
+}
+
+/* Private state */
+.visibility-toggle.is-private {
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-border-default);
+  color: var(--color-text-secondary);
+}
+
+.visibility-toggle.is-private:hover:not(:disabled) {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-border-hover);
+}
+
+/* Public state */
+.visibility-toggle.is-public {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.visibility-toggle.is-public:hover:not(:disabled) {
+  background-color: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .visibility-toggle.is-public {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+[data-theme='dark'] .visibility-toggle.is-public:hover:not(:disabled) {
+  background-color: rgba(16, 185, 129, 0.2);
+}
