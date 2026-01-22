@@ -33,6 +33,21 @@
   margin: 0;
 }
 
+.explore-back-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.explore-back-link:hover {
+  color: var(--color-accent-hover);
+  text-decoration: underline;
+}
+
 /* Grid Layout */
 .explore-grid {
   display: grid;

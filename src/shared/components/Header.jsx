@@ -37,7 +37,7 @@ export default function Header() {
     <>
       <header className="header">
         <div className="header-container">
-          <div className="header-brand">
+          <Link to="/" className="header-brand">
             <div className="header-logo-container">
               <img src={logoIcon} alt="Learning Map" className="header-logo" />
               <div className="header-logo-glow" aria-hidden="true"></div>
@@ -48,7 +48,7 @@ export default function Header() {
               </h1>
               <p className="header-subtitle">Chart your knowledge journey</p>
             </div>
-          </div>
+          </Link>
           <div className="header-actions">
             <Link
               to="/explore"
