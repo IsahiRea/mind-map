@@ -16,7 +16,8 @@
 
 DROP VIEW IF EXISTS public_topics_with_owners;
 
-CREATE VIEW public_topics_with_owners AS
+CREATE VIEW public_topics_with_owners
+WITH (security_invoker = true) AS
 SELECT
   t.id,
   t.title,
