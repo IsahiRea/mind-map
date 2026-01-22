@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useVisitorMode } from '../../features/auth/context/VisitorModeContext'
 import { useAuth } from '../../features/auth/hooks/useAuth'
 import { AuthModal } from '../../features/auth'
@@ -7,14 +8,18 @@ import ThemeToggle from './ThemeToggle'
 import logoIcon from '../../assets/icons/logo.svg'
 import userIcon from '../../assets/icons/user.svg'
 import visitorIcon from '../../assets/icons/visitor.svg'
+import exploreIcon from '../../assets/icons/explore.svg'
 import '../../css/components/Header.css'
 
 export default function Header() {
   const { isVisitorMode } = useVisitorMode()
   const { user } = useAuth()
   const { profile } = useUserProfile()
+  const location = useLocation()
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
+
+  const isExplorePage = location.pathname === '/explore' || location.pathname.startsWith('/user/')
 
   const handleAuthAction = () => {
     if (user) {
@@ -45,6 +50,13 @@ export default function Header() {
             </div>
           </div>
           <div className="header-actions">
+            <Link
+              to="/explore"
+              className={`header-nav-link ${isExplorePage ? 'header-nav-link-active' : ''}`}
+            >
+              <img src={exploreIcon} alt="" className="header-nav-icon" />
+              <span>Explore</span>
+            </Link>
             <ThemeToggle />
             <button className="header-mode-btn" onClick={handleAuthAction}>
               {user && profile?.avatarUrl ? (
