@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { Header } from '../../../shared'
 import { useDebounce } from '../../../shared/hooks/useDebounce'
 import { useInfiniteScroll } from '../../../shared/hooks/useInfiniteScroll'
@@ -32,6 +33,9 @@ export default function ExplorePage() {
         <section className="explore-hero">
           <h1 className="explore-hero-title">Explore Public Topics</h1>
           <p className="explore-hero-subtitle">Discover learning journeys from the community</p>
+          <Link to="/" className="explore-back-link">
+            ← Back to Home
+          </Link>
         </section>
 
         <ExploreFilters
