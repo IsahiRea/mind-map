@@ -10,6 +10,8 @@ import './css/App.css'
 // Lazy load page components for code splitting
 const HomePage = lazy(() => import('./features/topics/pages/HomePage'))
 const TopicMapPage = lazy(() => import('./features/nodes/pages/TopicMapPage'))
+const ExplorePage = lazy(() => import('./features/explore/pages/ExplorePage'))
+const UserProfilePage = lazy(() => import('./features/explore/pages/UserProfilePage'))
 const NotFoundPage = lazy(() => import('./shared/components/NotFoundPage'))
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/topic/:topicId" element={<TopicMapPage />} />
+                  <Route path="/explore" element={<ExplorePage />} />
+                  <Route path="/user/:userId" element={<UserProfilePage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </Suspense>
