@@ -2,13 +2,24 @@ import { supabase } from '../../../lib/supabase'
 
 export const topicsService = {
   /**
-   * Get all topics with node counts
+   * Get all topics with node counts for the current user
    * @returns {Promise<Array>} Array of topics with node_count
    */
   async getAll() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    // Only show topics for authenticated users (their own topics)
+    // Visitors should use the explore page instead
+    if (!user) {
+      return []
+    }
+
     const { data, error } = await supabase
       .from('topics_with_counts')
       .select('*')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
     if (error) throw error
