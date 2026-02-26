@@ -142,6 +142,20 @@ export default function TopicMapPage() {
     }
   }
 
+  // Calculate canvas dimensions based on node positions
+  const canvasDimensions = useMemo(() => {
+    if (nodes.length === 0) return {}
+
+    const NODE_WIDTH = 250
+    const NODE_HEIGHT = 200
+    const PADDING = 80
+
+    const maxX = Math.max(...nodes.map(n => (n.position?.x || 0) + NODE_WIDTH)) + PADDING
+    const maxY = Math.max(...nodes.map(n => (n.position?.y || 0) + NODE_HEIGHT)) + PADDING
+
+    return { minWidth: `${maxX}px`, minHeight: `${maxY}px` }
+  }, [nodes])
+
   // Memoize connection lines to avoid recalculating on every render
   const connectionLines = useMemo(() => {
     return connections
@@ -313,7 +327,10 @@ export default function TopicMapPage() {
       <main className="topic-map-canvas">
         <div className="canvas-container">
           <div className="canvas-background">
-            <div className="nodes-container" style={{ transform: `scale(${zoom / 100})` }}>
+            <div
+              className="nodes-container"
+              style={{ transform: `scale(${zoom / 100})`, ...canvasDimensions }}
+            >
               {/* Render connection lines first (so they appear behind nodes) */}
               {connectionLines.map(({ key, fromNode, toNode }) => (
                 <ConnectionLine key={key} fromNode={fromNode} toNode={toNode} />
