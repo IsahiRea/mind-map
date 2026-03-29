@@ -6,12 +6,17 @@ A modern mind-map application for tracking your learning journey. Built with Rea
 
 ## Features
 
+- **Multi-User Authentication** - Sign in with email/password, Google, or GitHub OAuth
+- **User Profiles** - Auto-created profiles with avatar syncing from OAuth providers
 - **Topic Management** - Create and organize learning topics with custom colors
+- **Public/Private Visibility** - Toggle topics between public and private
 - **Interactive Mind Maps** - Visual node-based learning maps with drag-and-drop
 - **Connection Tracking** - Link related concepts to see relationships
+- **Explore Page** - Browse public topics from all users with search, sort, and infinite scroll
+- **User Public Profiles** - View any user's public topics at `/user/:userId`
 - **Search & Filter** - Quickly find topics with search and sorting options
 - **Keyboard Shortcuts** - Efficient navigation with keyboard commands
-- **Visitor Mode** - Explore the app without authentication
+- **Visitor Mode** - Browse public topics without authentication
 - **Responsive Design** - Mobile-first approach with responsive layouts
 - **Theme Customization** - Light/dark mode with 8 accent color options
 
@@ -35,7 +40,7 @@ _View detailed information about learning nodes and their connections_
 ### Authentication
 
 ![Auth Modal](screenshots/auth-modal.png)
-_Owner sign-in modal for authenticated access_
+_Sign in with email/password, Google, or GitHub OAuth_
 
 ## Theming
 
@@ -94,12 +99,14 @@ The project follows a **feature-based folder structure** for better organization
 ```
 src/
 ├── features/           # Feature modules
-│   ├── auth/          # Authentication (AuthModal, useAuth)
+│   ├── auth/          # Authentication & visitor mode (AuthModal, useAuth, OAuth)
+│   ├── users/         # User profiles & visibility (UserProfileModal, VisibilityToggle)
 │   ├── topics/        # Topics management (TopicCard, HomePage)
-│   └── nodes/         # Nodes & connections (MapNode, TopicMapPage)
+│   ├── nodes/         # Nodes & connections (MapNode, TopicMapPage)
+│   └── explore/       # Explore public topics (ExplorePage, UserProfilePage)
 ├── shared/            # Shared/reusable code
 │   ├── components/    # Common components (Header, Modal, forms)
-│   ├── hooks/         # Custom hooks (useDebounce, useDraggable)
+│   ├── hooks/         # Custom hooks (useDebounce, useDraggable, useInfiniteScroll)
 │   └── constants/     # App constants
 └── lib/               # External libraries config (Supabase, React Query)
 ```
@@ -166,14 +173,16 @@ npm run dev
 
 Each feature is self-contained with its own components, hooks, services, and tests:
 
-- **auth/** - User authentication and visitor mode
+- **auth/** - User authentication (email/password, Google & GitHub OAuth) and visitor mode
+- **users/** - User profiles, avatar syncing, and topic visibility toggles
 - **topics/** - Topic creation, listing, and management
 - **nodes/** - Mind map nodes, connections, and visualization
+- **explore/** - Browse public topics, search/sort/infinite scroll, and user public profiles
 
 ### Shared Resources
 
-- **components/** - Reusable UI components (Header, Modal, forms)
-- **hooks/** - Custom React hooks (useDebounce, useDraggable, useLocalStorage)
+- **components/** - Reusable UI components (Header, Modal, forms, NotFoundPage)
+- **hooks/** - Custom React hooks (useDebounce, useDraggable, useInfiniteScroll, useLocalStorage)
 - **constants/** - Shared constants (color themes)
 
 ## Testing

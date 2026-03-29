@@ -4,8 +4,8 @@
 
 Add a new "Explore" feature that allows users to browse and discover public topics from all users in the mind-map application. This feature enables community discovery and lets users learn from each other's mind maps.
 
-**Status**: In Progress
-**Last Updated**: 2026-01-20
+**Status**: Complete
+**Last Updated**: 2026-03-28
 
 ---
 

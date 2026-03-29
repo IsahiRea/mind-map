@@ -15,9 +15,30 @@ import { supabase } from '../../../lib/supabase'
 
 const PAGE_SIZE = 12
 
+/**
+ * Transform database topic to component format
+ */
+function transformPublicTopic(topic) {
+  return {
+    id: topic.id,
+    title: topic.title,
+    description: topic.description,
+    iconBgColor: topic.icon_bg_color,
+    iconColor: topic.icon_color,
+    createdAt: topic.created_at,
+    nodeCount: topic.node_count || 0,
+    ownerId: topic.user_id,
+    ownerDisplayName: topic.owner_display_name || 'Anonymous',
+    ownerAvatarUrl: topic.owner_avatar_url || null,
+  }
+}
+
 export const exploreService = {
   /**
    * Get paginated public topics with owner info
+   * Uses public_topics_with_owners view for efficient single-query fetch.
+   * Falls back to topics_with_counts + separate profile query if view doesn't exist.
+   *
    * @param {Object} options - Query options
    * @param {string} options.search - Search term for title/description
    * @param {string} options.sortBy - Sort option (newest, oldest, title, nodes)
@@ -25,16 +46,8 @@ export const exploreService = {
    * @returns {Promise<Object>} { topics, hasMore }
    */
   async getPublicTopics({ search = '', sortBy = 'newest', page = 0 } = {}) {
-    let query = supabase
-      .from('topics')
-      .select(
-        `
-        id, title, description, icon_bg_color, icon_color, created_at, user_id,
-        user_profiles!inner(display_name, avatar_url),
-        nodes(count)
-      `
-      )
-      .eq('is_public', true)
+    // Try the optimized view first
+    let query = supabase.from('public_topics_with_owners').select('*')
 
     // Apply search filter
     if (search) {
@@ -50,51 +63,53 @@ export const exploreService = {
         query = query.order('title', { ascending: true })
         break
       case 'nodes':
-        // Sort by node count (requires post-processing)
-        query = query.order('created_at', { ascending: false })
+        query = query.order('node_count', { ascending: false })
         break
       default: // newest
         query = query.order('created_at', { ascending: false })
     }
 
-    // Apply pagination
+    // Apply pagination - fetch one extra to check if more exist
     const from = page * PAGE_SIZE
     const to = from + PAGE_SIZE
     query = query.range(from, to)
 
-    const { data, error } = await query
+    const { data: topicsData, error: topicsError } = await query
 
-    if (error) throw error
+    // If view doesn't exist, fall back to two-query approach
+    if (topicsError?.code === '42P01') {
+      return this._getPublicTopicsFallback({ search, sortBy, page })
+    }
+
+    if (topicsError) throw topicsError
 
     // Transform data and check if more pages exist
-    const topics = (data || []).slice(0, PAGE_SIZE).map(transformPublicTopic)
-    const hasMore = (data || []).length > PAGE_SIZE
-
-    // Sort by node count if requested
-    if (sortBy === 'nodes') {
-      topics.sort((a, b) => b.nodeCount - a.nodeCount)
-    }
+    const topics = (topicsData || []).slice(0, PAGE_SIZE).map(transformPublicTopic)
+    const hasMore = (topicsData || []).length > PAGE_SIZE
 
     return { topics, hasMore }
   },
 
   /**
+   * Fallback method using two queries (for when view doesn't exist)
+   * @private
+   */
+  async _getPublicTopicsFallback({ search = '', sortBy = 'newest', page = 0 } = {}) {
+    // ... queries topics_with_counts view + user_profiles separately
+    // See source code for full implementation
+  },
+
+  /**
    * Get a specific user's public topics
+   * Uses public_topics_with_owners view with fallback.
+   *
    * @param {string} userId - User UUID
    * @param {Object} options - Query options
    * @returns {Promise<Object>} { topics, hasMore }
    */
   async getUserPublicTopics(userId, { sortBy = 'newest', page = 0 } = {}) {
-    let query = supabase
-      .from('topics')
-      .select(
-        `
-        id, title, description, icon_bg_color, icon_color, created_at, user_id,
-        nodes(count)
-      `
-      )
-      .eq('is_public', true)
-      .eq('user_id', userId)
+    // Try optimized view first
+    let query = supabase.from('public_topics_with_owners').select('*').eq('user_id', userId)
 
     // Apply sorting
     switch (sortBy) {
@@ -115,31 +130,27 @@ export const exploreService = {
 
     const { data, error } = await query
 
+    // Fallback if view doesn't exist
+    if (error?.code === '42P01') {
+      return this._getUserPublicTopicsFallback(userId, { sortBy, page })
+    }
+
     if (error) throw error
 
-    const topics = (data || []).slice(0, PAGE_SIZE).map(topic => ({
-      id: topic.id,
-      title: topic.title,
-      description: topic.description,
-      iconBgColor: topic.icon_bg_color,
-      iconColor: topic.icon_color,
-      createdAt: topic.created_at,
-      nodeCount: topic.nodes?.[0]?.count || 0,
-    }))
-
+    const topics = (data || []).slice(0, PAGE_SIZE).map(transformPublicTopic)
     return { topics, hasMore: (data || []).length > PAGE_SIZE }
   },
 
   /**
    * Get public user profile info
    * @param {string} userId - User UUID
-   * @returns {Promise<Object>} User profile
+   * @returns {Promise<Object|null>} User profile or null if not found
    */
   async getPublicUserProfile(userId) {
     const { data, error } = await supabase
       .from('user_profiles')
-      .select('user_id, display_name, avatar_url')
-      .eq('user_id', userId)
+      .select('id, display_name, avatar_url')
+      .eq('id', userId)
       .single()
 
     if (error) {
@@ -151,29 +162,11 @@ export const exploreService = {
     }
 
     return {
-      userId: data.user_id,
+      userId: data.id,
       displayName: data.display_name || 'Anonymous',
       avatarUrl: data.avatar_url,
     }
   },
-}
-
-/**
- * Transform database topic to component format
- */
-function transformPublicTopic(topic) {
-  return {
-    id: topic.id,
-    title: topic.title,
-    description: topic.description,
-    iconBgColor: topic.icon_bg_color,
-    iconColor: topic.icon_color,
-    createdAt: topic.created_at,
-    nodeCount: topic.nodes?.[0]?.count || 0,
-    ownerId: topic.user_id,
-    ownerDisplayName: topic.user_profiles?.display_name || 'Anonymous',
-    ownerAvatarUrl: topic.user_profiles?.avatar_url || null,
-  }
 }
 ```
 
@@ -190,52 +183,42 @@ import { useEffect, useRef, useCallback } from 'react'
 
 /**
  * Hook for infinite scroll detection using IntersectionObserver
- * @param {Function} onLoadMore - Callback when load more is triggered
- * @param {Object} options - Options
- * @param {boolean} options.hasMore - Whether more items exist
- * @param {boolean} options.isLoading - Whether currently loading
- * @returns {Object} { sentinelRef }
+ * Returns a callback ref to attach to the last element in the list.
+ * Uses refs internally to avoid stale closures.
+ *
+ * @param {Function} callback - Called when the observed element is visible
+ * @param {boolean} hasMore - Whether more items exist
+ * @param {boolean} loading - Whether currently loading
+ * @returns {Function} Callback ref to attach to the last list element
  */
-export function useInfiniteScroll(onLoadMore, { hasMore, isLoading }) {
-  const sentinelRef = useRef(null)
-  const observerRef = useRef(null)
+export const useInfiniteScroll = (callback, hasMore, loading) => {
+  const observer = useRef()
+  const loadingRef = useRef(loading)
+  const hasMoreRef = useRef(hasMore)
 
-  const handleIntersect = useCallback(
-    entries => {
-      const [entry] = entries
-      if (entry.isIntersecting && hasMore && !isLoading) {
-        onLoadMore()
-      }
+  // Update refs to avoid stale closures
+  useEffect(() => {
+    loadingRef.current = loading
+    hasMoreRef.current = hasMore
+  }, [loading, hasMore])
+
+  const lastElementRef = useCallback(
+    node => {
+      if (loadingRef.current) return
+      if (observer.current) observer.current.disconnect()
+
+      observer.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMoreRef.current && !loadingRef.current) {
+          callback()
+        }
+      })
+
+      if (node) observer.current.observe(node)
     },
-    [onLoadMore, hasMore, isLoading]
+    [callback]
   )
 
-  useEffect(() => {
-    // Cleanup previous observer
-    if (observerRef.current) {
-      observerRef.current.disconnect()
-    }
-
-    // Create new observer
-    observerRef.current = new IntersectionObserver(handleIntersect, {
-      root: null,
-      rootMargin: '100px',
-      threshold: 0,
-    })
-
-    // Observe sentinel element
-    if (sentinelRef.current) {
-      observerRef.current.observe(sentinelRef.current)
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect()
-      }
-    }
-  }, [handleIntersect])
-
-  return { sentinelRef }
+  return lastElementRef
 }
 ```
 
@@ -609,6 +592,7 @@ Location: `src/features/explore/pages/ExplorePage.jsx`
 
 ```jsx
 import { useState, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { Header } from '../../../shared'
 import { useDebounce } from '../../../shared/hooks/useDebounce'
 import { useInfiniteScroll } from '../../../shared/hooks/useInfiniteScroll'
@@ -632,10 +616,8 @@ export default function ExplorePage() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
-  const { sentinelRef } = useInfiniteScroll(handleLoadMore, {
-    hasMore: hasNextPage,
-    isLoading: isFetchingNextPage,
-  })
+  // useInfiniteScroll returns a callback ref (not an object)
+  const lastElementRef = useInfiniteScroll(handleLoadMore, hasNextPage, isFetchingNextPage)
 
   return (
     <div className="explore-page">
@@ -645,6 +627,9 @@ export default function ExplorePage() {
         <section className="explore-hero">
           <h1 className="explore-hero-title">Explore Public Topics</h1>
           <p className="explore-hero-subtitle">Discover learning journeys from the community</p>
+          <Link to="/" className="explore-back-link">
+            &larr; Back to Home
+          </Link>
         </section>
 
         <ExploreFilters
@@ -668,23 +653,7 @@ export default function ExplorePage() {
           </div>
         ) : topics.length === 0 ? (
           <div className="explore-empty">
-            <div className="explore-empty-icon">
-              <svg
-                width="64"
-                height="64"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
+            {/* ... empty state SVG and messaging ... */}
             <h2 className="explore-empty-title">
               {debouncedSearch ? 'No results found' : 'No public topics yet'}
             </h2>
@@ -697,24 +666,22 @@ export default function ExplorePage() {
         ) : (
           <>
             <div className="explore-grid">
-              {topics.map((topic, index) => (
-                <ExploreTopicCard
-                  key={topic.id}
-                  {...topic}
-                  style={{ '--card-index': index % 12 }}
-                />
-              ))}
+              {topics.map((topic, index) => {
+                const isLastElement = index === topics.length - 1
+                return (
+                  <div key={topic.id} ref={isLastElement ? lastElementRef : null}>
+                    <ExploreTopicCard {...topic} style={{ '--card-index': index % 12 }} />
+                  </div>
+                )
+              })}
             </div>
 
-            {/* Infinite scroll sentinel */}
-            <div ref={sentinelRef} className="explore-sentinel">
-              {isFetchingNextPage && (
-                <div className="explore-loading-more">
-                  <div className="explore-spinner" />
-                  <span>Loading more topics...</span>
-                </div>
-              )}
-            </div>
+            {isFetchingNextPage && (
+              <div className="explore-loading-more">
+                <div className="explore-spinner" />
+                <span>Loading more topics...</span>
+              </div>
+            )}
 
             {!hasNextPage && topics.length > 0 && (
               <div className="explore-end">
@@ -736,7 +703,8 @@ Location: `src/features/explore/pages/UserProfilePage.jsx`
 ```jsx
 import { useState, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Header, NotFoundPage } from '../../../shared'
+import { Header } from '../../../shared'
+import NotFoundPage from '../../../shared/components/NotFoundPage'
 import { useInfiniteScroll } from '../../../shared/hooks/useInfiniteScroll'
 import { usePublicUserProfile } from '../hooks/usePublicUserProfile'
 import { useUserPublicTopics } from '../hooks/useUserPublicTopics'
@@ -764,14 +732,19 @@ export default function UserProfilePage() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
-  const { sentinelRef } = useInfiniteScroll(handleLoadMore, {
-    hasMore: hasNextPage,
-    isLoading: isFetchingNextPage,
-  })
+  // useInfiniteScroll returns a callback ref (not an object)
+  const lastElementRef = useInfiniteScroll(handleLoadMore, hasNextPage, isFetchingNextPage)
 
-  if (notFound) {
+  // Only show 404 if we have no profile AND no topics (after loading)
+  const isFullyLoaded = !profileLoading && !topicsLoading
+  const userNotFound = isFullyLoaded && notFound && topics.length === 0
+
+  if (userNotFound) {
     return <NotFoundPage />
   }
+
+  // Create a fallback profile if none exists
+  const displayProfile = profile || { displayName: 'Anonymous', avatarUrl: null }
 
   return (
     <div className="user-profile-page">
@@ -783,13 +756,15 @@ export default function UserProfilePage() {
             Explore
           </Link>
           <span className="user-profile-breadcrumb-separator">/</span>
-          <span className="user-profile-breadcrumb-current">{profile?.displayName || 'User'}</span>
+          <span className="user-profile-breadcrumb-current">
+            {displayProfile.displayName || 'User'}
+          </span>
         </nav>
 
         <UserProfileHeader
-          profile={profile}
+          profile={displayProfile}
           topicCount={topics.length}
-          isLoading={profileLoading}
+          isLoading={profileLoading && topicsLoading}
         />
 
         <div className="user-profile-sort">
@@ -821,26 +796,28 @@ export default function UserProfilePage() {
         ) : (
           <>
             <div className="user-profile-grid">
-              {topics.map((topic, index) => (
-                <ExploreTopicCard
-                  key={topic.id}
-                  {...topic}
-                  ownerId={userId}
-                  ownerDisplayName={profile?.displayName}
-                  ownerAvatarUrl={profile?.avatarUrl}
-                  style={{ '--card-index': index % 12 }}
-                />
-              ))}
+              {topics.map((topic, index) => {
+                const isLastElement = index === topics.length - 1
+                return (
+                  <div key={topic.id} ref={isLastElement ? lastElementRef : null}>
+                    <ExploreTopicCard
+                      {...topic}
+                      ownerId={userId}
+                      ownerDisplayName={displayProfile.displayName}
+                      ownerAvatarUrl={displayProfile.avatarUrl}
+                      style={{ '--card-index': index % 12 }}
+                    />
+                  </div>
+                )
+              })}
             </div>
 
-            <div ref={sentinelRef} className="user-profile-sentinel">
-              {isFetchingNextPage && (
-                <div className="user-profile-loading-more">
-                  <div className="explore-spinner" />
-                  <span>Loading more topics...</span>
-                </div>
-              )}
-            </div>
+            {isFetchingNextPage && (
+              <div className="user-profile-loading-more">
+                <div className="explore-spinner" />
+                <span>Loading more topics...</span>
+              </div>
+            )}
           </>
         )}
       </main>
@@ -926,27 +903,27 @@ export { useInfiniteScroll } from './hooks/useInfiniteScroll'
 
 ### Explore Page
 
-- [ ] Navigate to /explore
-- [ ] Verify public topics from all users appear
-- [ ] Test search functionality (debounced)
-- [ ] Test all sort options (newest, oldest, title, most nodes)
-- [ ] Test infinite scroll loads more topics
-- [ ] Click topic → view mind map
-- [ ] Test in visitor mode (not logged in)
-- [ ] Test responsive design on mobile
+- [x] Navigate to /explore
+- [x] Verify public topics from all users appear
+- [x] Test search functionality (debounced)
+- [x] Test all sort options (newest, oldest, title, most nodes)
+- [x] Test infinite scroll loads more topics
+- [x] Click topic → view mind map
+- [x] Test in visitor mode (not logged in)
+- [x] Test responsive design on mobile
 
 ### User Profile Page
 
-- [ ] Click owner badge → navigate to /user/:userId
-- [ ] Verify user's display name and avatar shown
-- [ ] Verify only their public topics appear
-- [ ] Test infinite scroll on user topics
-- [ ] Test back navigation via breadcrumb
+- [x] Click owner badge → navigate to /user/:userId
+- [x] Verify user's display name and avatar shown
+- [x] Verify only their public topics appear
+- [x] Test infinite scroll on user topics
+- [x] Test back navigation via breadcrumb
 
 ### Edge Cases
 
-- [ ] No public topics exist (empty explore page)
-- [ ] Search returns no results
-- [ ] User has no public topics
-- [ ] User profile not found (404 handling)
-- [ ] Topics with missing owner profiles (show "Anonymous")
+- [x] No public topics exist (empty explore page)
+- [x] Search returns no results
+- [x] User has no public topics
+- [x] User profile not found (404 handling)
+- [x] Topics with missing owner profiles (show "Anonymous")

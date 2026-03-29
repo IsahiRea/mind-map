@@ -97,9 +97,9 @@ CREATE TRIGGER update_user_profiles_updated_at
 
 #### 1.2 Run Migration
 
-- [ ] Execute SQL in Supabase SQL Editor
-- [ ] Verify columns added: `SELECT * FROM topics LIMIT 1;`
-- [ ] Verify table created: `SELECT * FROM user_profiles;`
+- [x] Execute SQL in Supabase SQL Editor
+- [x] Verify columns added: `SELECT * FROM topics LIMIT 1;`
+- [x] Verify table created: `SELECT * FROM user_profiles;`
 
 #### 1.3 Migrate Existing Data
 
@@ -719,41 +719,41 @@ isPublic: topic.is_public || false,
 
 ### Authentication
 
-- [ ] Sign in with Google works
-- [ ] Sign in with GitHub works
-- [ ] Sign in with email/password still works
-- [ ] Sign out works
-- [ ] Session persists on page refresh
+- [x] Sign in with Google works
+- [x] Sign in with GitHub works
+- [x] Sign in with email/password still works
+- [x] Sign out works
+- [x] Session persists on page refresh
 
 ### User Profile
 
-- [ ] Profile auto-created on first sign-in
-- [ ] Avatar displays from OAuth provider
-- [ ] Display name shows in header
-- [ ] Can update display name
-- [ ] Profile modal opens/closes
+- [x] Profile auto-created on first sign-in
+- [x] Avatar displays from OAuth provider
+- [x] Display name shows in header
+- [x] Can update display name
+- [x] Profile modal opens/closes
 
 ### Topic Visibility
 
-- [ ] New topics default to private
-- [ ] Can toggle topic to public
-- [ ] Can toggle topic back to private
-- [ ] Public topics visible when signed out
-- [ ] Private topics hidden when signed out
-- [ ] Own private topics visible when signed in
+- [x] New topics default to private
+- [x] Can toggle topic to public
+- [x] Can toggle topic back to private
+- [x] Public topics visible when signed out
+- [x] Private topics hidden when signed out
+- [x] Own private topics visible when signed in
 
 ### RLS Policies
 
-- [ ] Cannot edit another user's topic
-- [ ] Cannot delete another user's topic
-- [ ] Cannot add nodes to another user's topic
-- [ ] Can view public topics from other users
+- [x] Cannot edit another user's topic
+- [x] Cannot delete another user's topic
+- [x] Cannot add nodes to another user's topic
+- [x] Can view public topics from other users
 
 ### Data Migration
 
-- [ ] Existing topics assigned to admin user
-- [ ] Existing topics default to private
-- [ ] All existing nodes/connections preserved
+- [x] Existing topics assigned to admin user
+- [x] Existing topics default to private
+- [x] All existing nodes/connections preserved
 
 ---
 

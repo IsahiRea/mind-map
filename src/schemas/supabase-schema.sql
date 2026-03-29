@@ -111,8 +111,8 @@ CREATE POLICY "Allow public read access on learning_nodes" ON learning_nodes
 CREATE POLICY "Allow public read access on node_connections" ON node_connections
   FOR SELECT USING (true);
 
--- Public write access (since we don't have auth yet, allow all operations)
--- TODO: Restrict these policies once authentication is implemented
+-- Legacy open write policies (superseded by multi-user-migration.sql RLS policies)
+-- These are the original policies from before authentication was implemented.
 CREATE POLICY "Allow all insert on topics" ON topics
   FOR INSERT WITH CHECK (true);
 
